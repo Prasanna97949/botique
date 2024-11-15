@@ -1,0 +1,181 @@
+<%- include('partials/header') %>
+     <!-- side navbar -->
+     <Section id="sidenav" class="bg-white fixed z-20 top-0 transition-all duration-1000 " style="width: 50%; height: 100vh;right: -50%;">
+        <div class="text-right p-5">
+            <p id="close-nav" class="inline cursor-pointer">X</p>
+        </div>
+        <ul class="flex flex-col items-center gap-10 text-gray-600">
+            <li class="pt-1 border-b-2 hover:border-black cursor-pointer">Home</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer">Collections</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer">Category</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer">About Us</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer">Contact Us</li>
+        </ul>
+
+     </Section>
+     <!-- Slider -->
+      <div class=" p-2 flex items-center justify-center md:w-full h-full">
+        <div class="relative w-full  overflow-hidden">
+            <!-- Slider Container -->
+            <div id="slider" class="flex transition-transform duration-700 ease-in-out">
+
+              <div class="relative w-full flex-shrink-0">
+                <img src="./images/s1.jpg" alt="Slide 1" class="w-full h-full object-cover">
+              </div>
+              
+              <div class="w-full flex-shrink-0">
+                <img src="./images/s2.jpg" alt="Slide 2" class="w-full h-full object-cover">
+              </div>
+              
+              <div class="w-full flex-shrink-0">
+                <img src="./images/s3.jpg" alt="Slide 3" class="w-full h-full object-cover">
+              </div>
+
+              <div class="w-full flex-shrink-0">
+                <img src="./images/s4.jpg" alt="Slide 4" class="w-full h-full object-cover">
+              </div>
+
+            </div>
+        
+            <!-- Navigation Buttons -->
+            <button onclick="prevSlide()" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-3 py-2">
+              Previous
+            </button>
+            <button onclick="nextSlide()" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-3 py-2">
+              Next
+            </button>
+          </div>
+      </div>
+      <!-- Shop by Category -->
+       <!-- md screen -->
+       <h1 class="font-bold text-2xl md:text-5xl text-center text-white p-2 md:p-5">Shop By Category</h1>
+    <div class="p-2 hidden md:grid grid-cols-5 grid-rows-5 gap-4 pt-2">
+        <div class="col-span-3 row-span-3 flex flex-grow relative">
+            <img class="rounded-md" src="./images/s1.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-2xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="col-span-2 row-span-2 col-start-1 row-start-4 flex flex-grow relative">
+            <img class="rounded-md" src="./images/s2.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-2xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="col-span-3 row-span-2 col-start-3 row-start-4 flex flex-grow relative">
+            <img class="rounded-md" src="./images/s3.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-2xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="col-span-2 row-span-3 col-start-4 row-start-1 flex flex-grow relative">
+            <img class="rounded-md" src="./images/s4.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-2xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+    </div>
+    <!-- sm screen -->
+     <div class="md:hidden">
+        <div class="relative mt-2 p-1">
+            <img src="./images/s1.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="relative mt-2 p-1">
+            <img src="./images/s2.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="relative mt-2 p-1">
+            <img src="./images/s3.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="relative mt-2 p-1">
+            <img src="./images/s4.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+     </div>
+     <h1 class="font-bold text-2xl md:text-5xl text-center text-white p-2 md:p-5">Trending Picks</h1>
+     <div class="md:flex">
+        <div class="relative mt-2 p-1">
+            <img class="flex flex-grow w-full h-full" src="./images/s1.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="relative mt-2 p-1">
+            <img class="flex flex-grow w-full h-full" src="./images/s2.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+     </div>
+     <div class="md:flex">
+        <div class="relative mt-2 p-1">
+            <img class="flex flex-grow w-full h-full" src="./images/s3.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="relative mt-2 p-1">
+            <img class="flex flex-grow w-full h-full" src="./images/s4.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+     </div>
+     <div class="md:flex">
+        <div class="relative mt-2 p-1">
+            <img class="flex flex-grow w-full h-full" src="./images/s1.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+        <div class="relative mt-2 p-1">
+            <img class="flex flex-grow w-full h-full" src="./images/s2.jpg" alt="error">
+            <div class="absolute left-10 bottom-10">
+                <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
+                <h1 class="text-2xl text-white">The best in the market</h1>
+                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+            </div>
+        </div>
+     </div>
+     <h1 class="font-bold text-2xl md:text-5xl text-center text-white p-2 md:p-5">Why Us?</h1>
+     <p class="p-2 text-white text-2xl py-3 px-10">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel rerum earum distinctio dignissimos veritatis repellat error dolorem, fugiat modi laboriosam laborum sint consequuntur ipsa a assumenda praesentium quidem expedita facere?
+
+     </p>
+     <!-- Footer -->
+   <%- include('partials/footer') %>
