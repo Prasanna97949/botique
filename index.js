@@ -1,3 +1,4 @@
+// slider
 const slider = document.getElementById('slider');
             const slides = slider.children;
             let currentIndex = 0;
@@ -21,8 +22,9 @@ const slider = document.getElementById('slider');
         
             
             setInterval(nextSlide, 3000);
-            // sidemenu
-            var sidenav = document.getElementById("sidenav")
+
+// sidemenu
+var sidenav = document.getElementById("sidenav")
 var menuicon = document.getElementById("menuicon")
 var closenav = document.getElementById("close-nav")
 menuicon.addEventListener("click",function(){
@@ -32,6 +34,7 @@ closenav.addEventListener("click",function(){
     sidenav.style.right="-50%"
 })
 
+// search bar
 var searchbar = document.getElementById("searchbar")
 var search = document.getElementById("search")
 var search1 = document.getElementById("search1")
