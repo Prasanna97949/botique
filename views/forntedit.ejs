@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>frontedit</title>
+</head>
+<body>
+    <h1>Slider image change</h1>
+    <div class="slider">
+        <form action="/slider" method="post" enctype="multipart/form-data">
+        <div> 
+            <label for="image_1">Slider image 1:</label> 
+            <input type="file" id="image_1" name="image_1"> 
+            <input type="hidden" name="existingImage1" value="<%= slider.image_1 %>"> 
+            <img src="/uploads/<%= slider.image_1 %>" alt="Image 1" style="max-width: 100px;"> 
+            <a href="/delete-image/<%= slider.id %>/image_1/<%= slider.t_n %>">Remove Image 1</a> 
+        </div>
+        <div> 
+            <label for="image_2">Slider image 2:</label> 
+            <input type="file" id="image_2" name="image_2"> 
+            <input type="hidden" name="existingImage2" value="<%= slider.image_2 %>"> 
+            <img src="/uploads/<%= slider.image_2 %>" alt="Image 2" style="max-width: 100px;"> 
+            <a href="/delete-image/<%= slider.id %>/image_2/<%= slider.t_n %>" >Remove Image 2</a> 
+        </div>
+        <div> 
+            <label for="image_3">Slider image 3:</label> 
+            <input type="file" id="image_3" name="image_3"> 
+            <input type="hidden" name="existingImage3" value="<%= slider.image_3 %>"> 
+            <img src="/uploads/<%= slider.image_3 %>" alt="Image 3" style="max-width: 100px;"> 
+            <a href="/delete-image/<%= slider.id %>/image_3/<%= slider.t_n %>" >Remove Image 3</a> 
+        
+        </div>
+        <div> 
+            <label for="image_4">Slider image 4:</label> 
+            <input type="file" id="image_4" name="image_4"> 
+            <input type="hidden" name="existingImage4" value="<%= slider.image_4 %>"> 
+            <img src="/uploads/<%= slider.image_4 %>" alt="Image 4" style="max-width: 100px;"> 
+            <a href="/delete-image/<%= slider.id %>/image_4/<%= slider.t_n %>" >Remove Image 4</a> 
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+    </div>
+    <hr>
+    <div class="category">
+        <h1>category </h1>
+        <div>
+            <% first.forEach(front => { %>
+                <div>
+                <form action="/front" method="post" enctype="multipart/form-data">
+                    <lable >home image<%= front.id %></lable>
+                    <input type="hidden" name="id" value="<%= front.id %>">
+                    <input type="file" accept="image/*" name="image" >
+                    <input type="hidden" name="existingImage1" value="<%= front.image %>"> 
+                    <img src="/uploads/<%= front.image %>" alt="Image <%=front.id%>" style="max-width: 100px;"> 
+                    <a href="/delete-image/<%= front.id %>/image/<%= front.t_n %>" >Remove Image</a> 
+                    
+                
+                        <label for="category-title">category-title:</label>
+                        <input type="text" id="category-title" name="title" required value="<%= front.titel %>">
+                    
+                    
+                        <label for="short-notes">short notes:</label>
+                        <textarea id="short-notes" name="short_note" required><%= front.short_notes %></textarea>
+                    
+                    <button type="submit">save the change</button>
+                    </form>
+                </div>
+                    <% if (front.id === 4) { %>
+                     <hr>
+                     <h1>trending content</h1>
+                    <% } %>
+             
+            <% }) %>
+            
+
+        
+        </div>
+
+    </div>
+</body>
+</html>

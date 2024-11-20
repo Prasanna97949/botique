@@ -16,7 +16,7 @@
         <form action="/edit/<%= product.id %>" method="post" enctype="multipart/form-data">
             <div>
                 <label for="name">Product Name:</label>
-                <input type="text" id="name" name="name" value="<%= product.product_name %>" required>
+                <input type="text" id="name" name="name" value="<%= product.name %>" required>
             </div>
             <div>
                 <label for="description">Product Description:</label>
@@ -29,27 +29,35 @@
             <div>
                 <label for="price">Price:</label>
                 <input type="number" id="price" name="price" step="0.01" value="<%= product.price %>" required>
+            </div> 
+            <div>
+                <lable for="price_2">duplicate price</lable>
+                <input type="number" name="price_2" id="price_2" value="<%= product.price_2%>">
             </div>
+            <div>
+                <lable for="offer">offer (discount)</lable>
+                <input type="number" name="offer" id="offer" value="<%= product.offer %>">
+            </div>        
             <div> 
                 <label for="image_1">Image 1:</label> 
-                <input type="file" id="image_1" name="image_1"> 
+                <input type="file" id="image_1" name="image_1" required> 
                 <input type="hidden" name="existingImage1" value="<%= product.image_1 %>"> 
                 <img src="/uploads/<%= product.image_1 %>" alt="Image 1" style="max-width: 100px;"> 
-                <a href="/delete-image/<%= product.id %>/image_1">Remove Image 1</a> 
+                <a href="/delete-image/<%= product.id %>/image_1/<%= product.t_n %>">Remove Image 1</a> 
             </div>
             <div> 
-                <label for="image_1">Image 2:</label> 
-                <input type="file" id="image_1" name="image_1"> 
-                <input type="hidden" name="existingImage1" value="<%= product.image_2 %>"> 
-                <img src="/uploads/<%= product.image_2 %>" alt="Image 1" style="max-width: 100px;"> 
-                <a href="/delete-image/<%= product.id %>/image_2" >Remove Image 2</a> 
+                <label for="image_2">Image 2:</label> 
+                <input type="file" id="image_2" name="image_2"> 
+                <input type="hidden" name="existingImage2" value="<%= product.image_2 %>"> 
+                <img src="/uploads/<%= product.image_2 %>" alt="Image 2" style="max-width: 100px;"> 
+                <a href="/delete-image/<%= product.id %>/image_2/<%= product.t_n %>" >Remove Image 2</a> 
             </div>
             <div> 
-                <label for="image_1">Image 3:</label> 
-                <input type="file" id="image_1" name="image_1"> 
-                <input type="hidden" name="existingImage1" value="<%= product.image_3 %>"> 
-                <img src="/uploads/<%= product.image_3 %>" alt="Image 1" style="max-width: 100px;"> 
-                <a href="/delete-image/<%= product.id %>/image_3" >Remove Image 3</a> 
+                <label for="image_3">Image 3:</label> 
+                <input type="file" id="image_3" name="image_3"> 
+                <input type="hidden" name="existingImage3" value="<%= product.image_3 %>"> 
+                <img src="/uploads/<%= product.image_3 %>" alt="Image 3" style="max-width: 100px;"> 
+                <a href="/delete-image/<%= product.id %>/image_3/<%= product.t_n %>" >Remove Image 3</a> 
             </div>
             <button type="submit">Save Changes</button>
         </form>
