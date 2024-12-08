@@ -1,126 +1,72 @@
-<div class="relative z-10" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-    <!--
-      Background backdrop, show/hide based on slide-over state.
-  
-      Entering: "ease-in-out duration-500"
-        From: "opacity-0"
-        To: "opacity-100"
-      Leaving: "ease-in-out duration-500"
-        From: "opacity-100"
-        To: "opacity-0"
-    -->
-    <div class="fixed inset-0 bg-gray-500/75 transition-opacity" aria-hidden="true"></div>
-  
-    <div class="fixed inset-0 overflow-hidden">
-      <div class="absolute inset-0 overflow-hidden">
-        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-          <!--
-            Slide-over panel, show/hide based on slide-over state.
-  
-            Entering: "transform transition ease-in-out duration-500 sm:duration-700"
-              From: "translate-x-full"
-              To: "translate-x-0"
-            Leaving: "transform transition ease-in-out duration-500 sm:duration-700"
-              From: "translate-x-0"
-              To: "translate-x-full"
-          -->
-          <div class="pointer-events-auto w-screen max-w-md">
-            <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-              <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                <div class="flex items-start justify-between">
-                  <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Shopping cart</h2>
-                  <div class="ml-3 flex h-7 items-center">
-                    <button type="button" class="relative -m-2 p-2 text-gray-400 hover:text-gray-500">
-                      <span class="absolute -inset-0.5"></span>
-                      <span class="sr-only">Close panel</span>
-                      <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
+<%- include('partials/header') %>
+    
+    <!-- Content -->
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl text-white font-bold text-center mb-6">Shopping Cart</h1>
+
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="cart-items space-y-6">
+                <% if (cart.length > 0) { %>
+                 
+               
+                <% cart.forEach(item => { %>
+                <div class="cart-item flex items-center space-x-4">
+                    <img src="/uploads/<%= item.image %>" alt="<%= item.name %>" class="w-36 h-36 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h2 class="text-lg font-semibold"><%= item.name %></h2>
+                        <p class="text-gray-600">Price: ₹<span class="product-price"><%= item.price %></span></p>
+                        <form action="/cart/update/<%= item.id %>" method="POST" class="inline">
+                          <div class="flex items-center mt-3 space-x-2">
+
+                               <input type="number" id="quantity" name="quantity" value="<%= item.quantity %>" min="1" class="border p-2 rounded w-20 ml-2">
+                               
+                             </div> 
+                             <button type="submit" class="mt-2 bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">Update</button> 
+                         </form>
+                        <form action="/cart/remove/<%= item.id %>" method="POST" class="inline">
+                            <button type="submit" class="mt-2 bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">Remove</button>
+                        </form>
+                    </div>
+                    <div class="item-total text-right">
+                        <p class="text-gray-700">Total: ₹<span class="item-total-price"><%= item.quantity * item.price %></span></p>
+                    </div>
                 </div>
-  
-                <div class="mt-8">
-                  <div class="flow-root">
-                    <ul role="list" class="-my-6 divide-y divide-gray-200">
-                      <li class="flex py-6">
-                        <div class="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                          <img src="https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-01.jpg" alt="Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt." class="size-full object-cover">
-                        </div>
-  
-                        <div class="ml-4 flex flex-1 flex-col">
-                          <div>
-                            <div class="flex justify-between text-base font-medium text-gray-900">
-                              <h3>
-                                <a href="#">Throwback Hip Bag</a>
-                              </h3>
-                              <p class="ml-4">$90.00</p>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-500">Salmon</p>
-                          </div>
-                          <div class="flex flex-1 items-end justify-between text-sm">
-                            <p class="text-gray-500">Qty 1</p>
-  
-                            <div class="flex">
-                              <button type="button" class="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                      <li class="flex py-6">
-                        <div class="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                          <img src="https://tailwindui.com/plus/img/ecommerce-images/shopping-cart-page-04-product-02.jpg" alt="Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch." class="size-full object-cover">
-                        </div>
-  
-                        <div class="ml-4 flex flex-1 flex-col">
-                          <div>
-                            <div class="flex justify-between text-base font-medium text-gray-900">
-                              <h3>
-                                <a href="#">Medium Stuff Satchel</a>
-                              </h3>
-                              <p class="ml-4">$32.00</p>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-500">Blue</p>
-                          </div>
-                          <div class="flex flex-1 items-end justify-between text-sm">
-                            <p class="text-gray-500">Qty 1</p>
-  
-                            <div class="flex">
-                              <button type="button" class="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-  
-                      <!-- More products... -->
-                    </ul>
-                  </div>
-                </div>
-              </div>
-  
-              <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-                <div class="flex justify-between text-base font-medium text-gray-900">
-                  <p>Subtotal</p>
-                  <p>$262.00</p>
-                </div>
-                <p class="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
-                <div class="mt-6">
-                  <a href="#" class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Checkout</a>
-                </div>
-                <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
-                  <p>
-                    or
-                    <button type="button" class="font-medium text-indigo-600 hover:text-indigo-500">
-                      Continue Shopping
-                      <span aria-hidden="true"> &rarr;</span>
-                    </button>
-                  </p>
-                </div>
-              </div>
+                <% }); %>
+                <% } else {%>
+                    <p>Your cart is empty.</p>
+                    <a href="/collection">Continue Shopping</a>
+
+                    <% } %>
+                
             </div>
-          </div>
         </div>
-      </div>
+        <% if (cart.length>0) { %>
+            <div class="cart-summary bg-white shadow rounded-lg p-6 mt-6">
+                <h3 class="text-xl font-bold mb-4">Cart Summary</h3>
+                <hr>
+                <p class="text-gray-700 mb-2">Total Items: <span id="total-items"><%= cart.reduce((acc, item) => acc + item.quantity, 0) %></span></p>
+                <hr>
+                <p class="text-gray-700 mb-4">Grand Total: ₹<span id="grand-total"><%= cart.reduce((acc, item) => acc + (item.price * item.quantity), 0) %></span></p>
+                <hr>
+                <a href="/checkout" style="width: auto;"> <button class="mt-3 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Proceed to Checkout</button></a>
+            </div>
+         
+        <% } else { %>
+
+        <div class="cart-summary bg-white shadow rounded-lg p-6 mt-6">
+            <h3 class="text-xl font-bold mb-4">Cart Summary</h3>
+            <hr>
+            <p class="text-gray-700 mb-2">Total Items: <span id="total-items"><%= cart.reduce((acc, item) => acc + item.quantity, 0) %></span></p>
+            <hr>
+            <p class="text-gray-700 mb-4">Grand Total: ₹<span id="grand-total"><%= cart.reduce((acc, item) => acc + (item.price * item.quantity), 0) %></span></p>
+            <hr>
+             <button class="mt-3 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Proceed to Checkout</button>
+        </div>
+        <% } %>
     </div>
-  </div>
-  
+
+    <!-- Footer -->
+<%- include('partials/footer') %>
+   
+</body>
+</html>

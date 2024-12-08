@@ -1,0 +1,54 @@
+<%- include('partials/header') %>
+     <!-- content -->
+      <div class=" text-white">
+        <header class="bg-blue-500 text-black py-4">
+            <div class="container mx-auto text-center">
+              <h1 class="text-3xl font-bold">Boutique Shop</h1>
+              <p class="text-sm">Fashion with a touch of elegance</p>
+            </div>
+          </header>
+        
+          <main class="container mx-auto mt-10 p-5">
+            <h2 class="text-2xl font-semibold text-center text-white">Get in Touch</h2>
+            <p class="text-center text-white mb-8">We'd love to hear from you!</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <!-- Contact Form -->
+              <form class="bg-white shadow-md rounded-lg p-6">
+                <div class="mb-4">
+                  <label for="name" class="block text-gray-700 font-medium">Name</label>
+                  <input type="text" id="name" placeholder="Your Name" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="mb-4">
+                  <label for="email" class="block text-gray-700 font-medium">Email</label>
+                  <input type="email" id="email" placeholder="Your Email" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <div class="mb-4">
+                  <label for="message" class="block text-gray-700 font-medium">Message</label>
+                  <textarea id="message" rows="4" placeholder="Your Message" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-pink-600">Send Message</button>
+              </form>
+        
+              <!-- Contact Details -->
+              <div class="bg-white shadow-md rounded-lg p-6">
+                <h3 class="text-xl font-medium text-gray-700">Contact Details</h3>
+                <p class="mt-4 text-gray-600"><strong>Address:</strong> 123 Fashion Avenue, Style City</p>
+                <p class="mt-2 text-gray-600"><strong>Phone:</strong> +91 9876543210</p>
+                <p class="mt-2 text-gray-600"><strong>Email:</strong> contact@boutiqueshop.com</p>
+                <h4 class="text-lg font-medium text-gray-700 mt-6">Follow Us</h4>
+                <div class="flex space-x-4 mt-2">
+                  <a href="#" class="text-blue-500 hover:text-blue-600">Facebook</a>
+                  <a href="#" class="text-blue-500 hover:text-blue-600">Instagram</a>
+                  <a href="#" class="text-blue-500 hover:text-blue-600">Twitter</a>
+                </div>
+              </div>
+            </div>
+          </main>        
+      </div>
+     <!-- Footer -->
+    <%- include('partials/footer') %>
+     <script src="/js/index.js"></script>
+    
+</body>
+</html>

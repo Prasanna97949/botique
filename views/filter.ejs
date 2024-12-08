@@ -24,29 +24,66 @@
     <hr class="mt-2">
     <div class="mt-2">
         <h3 class="font-bold">Filter by Cost</h3>
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="price" value="ASC" class="form-radio text-blue-600 h-4 w-4" checked="checked">
-            <span class="text-gray-700">Price: Low to High</span>
-        </label>
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="price" value="DESC" class="form-radio text-blue-600 h-4 w-4">
-            <span class="text-gray-700">Price: High to Low</span>
-        </label>
+        <% if (locals.checked ? checked:"") { %>
+            <label class="flex items-center space-x-2">
+                <input type="radio" name="price" value="ASC" class="form-radio text-blue-600 h-4 w-4" >
+                <span class="text-gray-700">Price: Low to High</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="radio" name="price" value="DESC" class="form-radio text-blue-600 h-4 w-4" checked="checked">
+                <span class="text-gray-700">Price: High to Low</span>
+            </label>
+        
+        <% } else { %>
+            <label class="flex items-center space-x-2">
+                <input type="radio" name="price" value="ASC" class="form-radio text-blue-600 h-4 w-4" checked="checked">
+                <span class="text-gray-700">Price: Low to High</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="radio" name="price" value="DESC" class="form-radio text-blue-600 h-4 w-4" >
+                <span class="text-gray-700">Price: High to Low</span>
+            </label>
+            <% } %>
     </div>
     <hr class="mt-2">
     <div class="mt-2">
         <h3 class="font-bold">Filter by Category</h3>
         <label class="flex items-center space-x-2 mt-2">
-            <input type="checkbox" name="category" value="silk" class="form-checkbox text-green-600 h-4 w-4">
+            <% if (typeof filter === 'string' ? filter === 'silk' : Array.isArray(filter) && filter.includes('silk')) { %>
+                <input type="checkbox" name="category" value="silk" class="form-checkbox text-green-600 h-4 w-4" checked>
+                <span class="text-gray-700">Silk Sarees</span>
+            <% }
+             else { %>
+             
+            
+            <input type="checkbox" name="category" value="silk" class="form-checkbox text-green-600 h-4 w-4" >
             <span class="text-gray-700">Silk Sarees</span>
+            <% } %>
         </label>
         <label class="flex items-center space-x-2 mt-2">
-            <input type="checkbox" name="category" value="cotton" class="form-checkbox text-green-600 h-4 w-4">
+            <% if (typeof filter === 'string' ? filter === 'cotton' : Array.isArray(filter) && filter.includes('cotton')) { %>
+                <input type="checkbox" name="category" value="cotton" class="form-checkbox text-green-600 h-4 w-4" checked>
+                <span class="text-gray-700">Cotton Sarees</span>
+            <% } 
+              else { %>
+             
+            
+            <input type="checkbox" name="category" value="cotton" class="form-checkbox text-green-600 h-4 w-4" >
             <span class="text-gray-700">Cotton Sarees</span>
+            <% } %>
+            
         </label>
         <label class="flex items-center space-x-2 mt-2">
-            <input type="checkbox" name="category" value="polyester" class="form-checkbox text-green-600 h-4 w-4">
-            <span class="text-gray-700">Polyester</span>
+            <% if (typeof filter === 'string' ? filter === 'polyester' : Array.isArray(filter) && filter.includes('polyester')) { %>
+                <input type="checkbox" name="category" value="polyester" class="form-checkbox text-green-600 h-4 w-4" checked>
+                <span class="text-gray-700">Polyester Sarees</span>
+            <% } 
+             else { %>
+             
+            
+            <input type="checkbox" name="category" value="polyester" class="form-checkbox text-green-600 h-4 w-4" >
+            <span class="text-gray-700">Polyester Sarees</span>
+            <% } %>
         </label>
     </div>
 </div>
@@ -62,17 +99,26 @@
         <% products.forEach(product => { %>
             <div class="p-4  rounded-lg shadow-lg">
                 <img src="/uploads/<%= product.image_1 %>" alt="<%= product.name %>" class="w-full h-64 object-cover rounded-md">
-                <h2 class="text-blue-800 text-2xl font-bold mt-4"><%= product.name %></h2>
-                <p class="text-gray-700 text-xl font-semibold">Price: ₹<%= product.price %></p>
-                <p class="text-gray-500 mt-2"><%= product.description %></p>
+                <h2 class="text-white text-2xl font-bold mt-4"><%= product.name %></h2>
+                <p class="text-white text-xl font-semibold">Price: ₹<%= product.price %></p>
+                <p class="text-white mt-2"><%= product.description %></p>
                 <form action="/cart/add/<%= product.id %>/<%= product.name %>" method="POST" class="mt-4">
-                    <label for="quantity_<%= product.id %>" class="text-gray-700">Quantity:</label>
-                    <input type="number" id="quantity_<%= product.id %>" name="quantity" value="1" min="1" class="border p-2 rounded w-20 ml-2">
-                    <button type="submit" class="w-full px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded mt-4">Add to Cart</button>
+                    <label for="quantity_<%= product.id %>" class="text-white">Quantity:</label>
+                    <input type="number" id="quantity_<%= product.id %>" name="quantity" value="1" min="1" class="border p-2 rounded w-20 ml-2"> <button type="submit" class=" px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded mt-4">Add to Cart</button>
+                   
+
+
                 </form>
+                <form action="/product/<%= product.id %>" method="get">
+                    <button type="submit" class="w-full px-3 py-2 bg-black hover:bg-blue-600 text-white font-bold rounded mt-4">View Product</button>
+
+                </form>
+ 
+
             </div>
         <% }); %>
     </div>
+  
 </div>
 
 <!-- Footer -->

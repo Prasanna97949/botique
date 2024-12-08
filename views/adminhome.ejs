@@ -1,0 +1,23 @@
+<%- include('partials/admin') %>
+     <!-- content -->
+      <div class="text-center my-12 mx-12  p-10">
+        <h1 class="text-3xl text-white font-bold text-center mt-3 mb-3">Welcome to Admin Login</h1>
+        <div class="md:flex justify-center  gap-10">
+            <div class="mt-3 flex flex-col bg-gray-300 p-10 gap-2 justify-center rounded-md items-center">
+                <img class="w-full h-full" src="/images/homepage.jpg" alt="homepage">
+                <h1>Edit or Update Your Homepage</h1>
+                <a style="width: 100%;" href ="/homepage">    <button  class="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition duration-300" >Edit Homepage</button></a>
+            </div>
+            <div class="mt-3 flex flex-col bg-gray-300 p-10 gap-2 justify-center rounded-md items-center">
+                <img class="w-full h-full" src="/images/product.jpg" alt="products">
+                <h1>Edit or Update Your Products</h1>
+                <a style="width: 100%;" href ="/addproduct">  <button class="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit Products</button></a>
+            </div>
+        </div>
+      </div>
+     <!-- Footer -->
+     <%- include('partials/footer') %>
+     <script src="/js/login.js"></script>
+    
+</body>
+</html>

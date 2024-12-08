@@ -1,0 +1,78 @@
+<%- include('partials/header') %>
+     <!-- content -->
+      <div class="min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+            <form action="/login" method="post">
+              <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="username"
+                  placeholder="Enter your email"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  value="<%= locals.email ? email:"" %>"
+                  required
+                />
+              </div>
+              <div class="mb-6">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password"
+                  placeholder="Enter your password"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  required
+                />
+              </div>
+              <div class="flex items-center justify-between mb-4">
+                <label class="flex items-center text-sm">
+                  <input type="checkbox" class="form-checkbox text-blue-600 rounded">
+                  <span class="ml-2 text-gray-700">Remember me</span>
+                </label>
+                <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+              >
+                Login
+              </button>
+            </form>
+            <div class="flex items-center my-6">
+              <hr class="flex-grow border-gray-300">
+              <span class="px-3 text-gray-600 text-sm">or</span>
+              <hr class="flex-grow border-gray-300">
+            </div>
+            <button
+              onclick="handleGoogleLogin()"
+              class="w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 font-medium py-2 rounded-lg hover:bg-gray-100 transition duration-300"
+            >
+              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" class="w-5 h-5 mr-2">
+              Login with Google
+            </button>
+            <p class="mt-6 text-sm text-center text-gray-600">
+              Don't have an account? <a href="/signup" class="text-blue-600 hover:underline">Sign up</a>
+            </p>
+          </div>
+      </div>
+     
+     <!-- Footer -->
+   <%- include('partials/footer') %>
+   <% if ((locals.notes ? notes:"") ==="password") { %>
+    <script>
+    alert("incorrect password !")
+    </script>
+   <% } else if((locals.notes ? notes:"") ==="email"){ %>
+    <script>
+      alert("Email is not register try to sign up")
+      </script>
+
+    <% }%>
+  
+     <script src="/js/login.js"></script>
+    
+</body>
+</html>

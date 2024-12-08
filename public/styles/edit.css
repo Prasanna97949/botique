@@ -1,0 +1,23 @@
+.edit{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: fit-content;
+}
+.inner{
+    display: flex;
+    flex-direction: column;
+    background-color: aqua;
+    width: fit-content;
+}
+.card{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.card div{
+    width: fit-content;
+    height: fit-content;
+}

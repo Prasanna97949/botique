@@ -1,0 +1,191 @@
+<%- include('partials/admin') %>
+
+  <!-- content -->
+  <!-- Add Product  -->
+  <h1 class="text-3xl text-white font-bold text-center p-3">Edit or Add Your Product</h1>
+  <!-- add product description -->
+  <h1 class="text-2xl text-white font-bold p-3">Add product Descriptions</h1>
+  <form action="/add" method="POST" enctype="multipart/form-data">
+    <table class="m-2">
+      <tr><td><h3 class="font-bold text-xl text-white">Product Name:</h3></td><td><input class="p-3 m-3 rounded-md" type="text" placeholder="Product name" name="name" required></td></tr>
+      <tr><td><h3 class="font-bold text-xl text-white">Product Price:</h3></td><td><input class="p-3 m-3 rounded-md" type="number" placeholder="Product Price" name="price"   required></td></tr>
+      <tr><td><h3 class="font-bold text-xl text-white">Product Description:</h3></td><td><textarea class="p-3 m-3 rounded-md" placeholder="Product Description" id="desc" name="description" required></textarea></td></tr>
+      <tr><td><h3 class="font-bold text-xl text-white">Product Category:</h3></td><td><input class="p-3 m-3 rounded-md" type="text" placeholder="Product Category"name="category"  required></td></tr>
+      <tr><td><h3 class="font-bold text-xl text-white">Duplicate Price:</h3></td><td><input class="p-3 m-3 rounded-md" type="number" placeholder="Duplicate Price" name="price_2" ></td></tr>
+      <tr><td><h3 class="font-bold text-xl text-white">Offer (Discount):</h3></td><td><input class="p-3 m-3 rounded-md" type="number" placeholder="Offer (Discount)" name="offer" id="offer"></td></tr>
+    </table>
+    <hr>
+    <!-- upload images -->
+    <h1 class="text-2xl text-white font-bold p-3">Upload your product images</h1>
+    <div class="p-3 flex flex-col">
+      <table class="bg-white">
+        <tr class="border-b-2">
+          <td class="p-2 pr-2">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Upload Image 1</h2>
+          </td>
+          <td class="p-2 hii pr-2">
+            <div>
+              <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-2">Upload your image</label>
+              <div
+                class="relative flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-50 cursor-pointer">
+                <input type="file" id="imageUpload" accept="image/*" name="image_1"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImage(event)" />
+                <p class="text-gray-500">Click to upload an image</p>
+              </div>
+            </div>
+          </td>
+          <td class="p-2 pr-2 image-container">
+            <div  class="mt-6 preview-container hidden w-32 " >
+              <h3 class="text-lg font-medium text-gray-700 mb-3">Preview</h3>
+              <div class="relative group">
+                <img class="preview-image" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg">
+                <button type="button" onclick="deleteImage()"
+                  class="absolute top-2 right-2 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr class="border-b-2">
+          <td class="p-2 pr-2">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Upload Image 2</h2>
+          </td>
+          <td class="p-2 pr-2">
+            <div>
+              <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-2">Upload your image</label>
+              <div
+                class="relative flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-50 cursor-pointer">
+                <input type="file" id="imageUpload" accept="image/*" name="image_2"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImage(event)" />
+                <p class="text-gray-500">Click to upload an image</p>
+              </div>
+            </div>
+          </td>
+          <td class="p-2 pr-2 image-container">
+            <div  class="mt-6 preview-container hidden w-32">
+              <h3 class="text-lg font-medium text-gray-700 mb-3">Preview</h3>
+              <div class="relative group">
+                <img class="preview-image" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg">
+                <button type="button" onclick="deleteImage()"
+                  class="absolute top-2 right-2 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr class="border-b-2">
+          <td class="p-2 pr-2">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Upload Image 3</h2>
+          </td>
+          <td class="p-2 pr-2">
+            <div>
+              <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-2">Upload your image</label>
+              <div
+                class="relative flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-50 cursor-pointer">
+                <input type="file" id="imageUpload" accept="image/*" name="image_3"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImage(event)" />
+                <p class="text-gray-500">Click to upload an image</p>
+              </div>
+            </div>
+          </td>
+          <td class="p-2 pr-2 image-container">
+            <div  class="mt-6 hidden preview-container w-32">
+              <h3 class="text-lg font-medium text-gray-700 mb-3">Preview</h3>
+              <div class="relative group">
+                <img class="preview-image" src="" alt="Preview" class=" w-full h-32 object-cover rounded-lg">
+                <button type="button" onclick="deleteImage()"
+                  class="absolute top-2 right-2 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr class="border-b-2">
+          <td class="p-2 pr-2">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Upload Image 4</h2>
+          </td>
+          <td class="p-2 pr-2">
+            <div>
+              <label for="imageUpload" class="block text-sm font-medium text-gray-700 mb-2">Upload your image</label>
+              <div
+                class="relative flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-50 cursor-pointer">
+                <input type="file" id="imageUpload" accept="image/*" name="image_4"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImage(event)" />
+                <p class="text-gray-500">Click to upload an image</p>
+              </div>
+            </div>
+          </td>
+          <td class="p-2 pr-2 image-container">
+            <div  class="mt-6  preview-container hidden w-32">
+              <h3 class="text-lg font-medium text-gray-700 mb-3">Preview</h3>
+              <div class="relative group">
+                <img class="preview-image" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg">
+                <button type="button" onclick="deleteImage()"
+                  class="absolute top-2 right-2 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <button type="submit"
+        class="w-full mt-2 bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition duration-300">Add
+        Product</button>
+
+    </div>
+  </form>
+  <hr>
+  <!-- Product view -->
+  <h1 class="text-3xl text-white font-bold text-center p-3">View or Edit Products</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+    <% products.forEach(product=> { %>
+      <div class="bg-white p-2 m-2  rounded-md">
+        <img src="/uploads/<%= product.image_1%>" alt="error">
+        <h3 class="text-xl font-bold">
+          <%= product.name %>
+        </h3>
+        <p>
+          <%= product.description %>
+        </p>
+        <p><span><b>Price: ₹</b></span>
+          <%= product.price %>
+        </p>
+        <p><span><b>Category: </b></span>
+          <%= product.category %>
+        </p>
+        <div class="flex">
+        
+         <div class="mx-2 w-full mt-2"> <a href="/edit/<%= product.id %>" style="width:max-content"> <button
+              class=" w-full mt-2 bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition duration-300">Edit</button></a></div>
+        
+        
+        
+        <div class="mx-2 w-full mt-2">
+          <a href="/delete/<%= product.id %>" style="width:max-content;"><button
+              class=" w-full mt-2 bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 transition duration-300">Delete</a></button></div>
+        
+        
+        
+        </div>
+      </div>
+
+      <% }); %>
+    
+  </div>
+  <hr>
+
+
+
+
+  <!-- Footer -->
+  <%- include('partials/footer') %>
+    <script src="/js/editproductpage.js"></script>
+
+    </body>
+
+    </html>
