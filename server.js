@@ -14,7 +14,7 @@ import session, { Cookie } from "express-session";
 import GoogleStrategy from "passport-google-oauth2";
 import Razorpay from 'razorpay';
 // server.js
-import { pay } from './pay.js';
+
 env.config();
 
 const razorpay = new Razorpay({
@@ -56,7 +56,9 @@ app.use(session({
     secret:"topsecret",
     saveUninitialized:true,
     resave:false,
-    Cookie:{ secure: true }
+    Cookie:{ secure: true ,
+        maxAge:1000*60*60*24,
+    }
 
 }
 
@@ -390,8 +392,13 @@ if(password === re_password){
                 console.log("error while hassing",err);
             }
             else{
-                 const result = await db.query("insert into users (first_name,email,phone,password) values($1,$2,$3,$4)",[first_name,email,phone,hash]);
-                 res.render("checkout.ejs");
+                 const result = await db.query("insert into users (first_name,email,phone,password) values($1,$2,$3,$4) returning *",[first_name,email,phone,hash]);
+                 const user = result.rows[0];
+                 req.login(user,(err)=>{
+                    console.log("error in signup",err);
+                    res.redirect("/checkout");
+                    
+                 })
             }
         });
     
@@ -461,59 +468,116 @@ app.post("/login", (req, res, next) => {
         });
     })(req, res, next);
 });
+app.get("/logout", (req, res) => {
+    req.logout(function (err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect("/");
+    });
+  });
+app.get(
+    "/auth/google",
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+    })
+  );
+  app.get(
+    "/auth/google/checkout",
+    passport.authenticate("google", {
+      successRedirect: "/checkout",
+      failureRedirect: "/login",
+    })
+  );
 
-passport.use(new Strategy( async function verify(username,password,cb) {
+passport.use("local",new Strategy( async function verify(username,password,cb) {
    
     try {
        const result=await db.query("select * from users where email =$1",[username]);
+       const stored=result.rows[0].password;
+        
+       const user = result.rows[0];
        
        if(result.rows.length>0){
-        const stored=result.rows[0].password;
-        const user = result.rows[0];
-bcrypt.compare(password,stored,(err,valid)=>
-      {
-     if(err){
-      return cb(err);
-     }
-     else if(valid){
-        const type="view";
-        const orderid=9;
-        let total;
-
-        const cartiteam= cart.map(item =>[
-            
-            item.id,
-            item.name,
-            item.price,
-            item.quantity,
-            total=item.quantity*item.price,
-            type,
-            user.id,
-            orderid
-         ]);
-        console.log(cartiteam);
-        return cb(null,user);
-
+       if(stored==="google"){
+        return cb(null,false,{message:"google"});
+       }else{
+        bcrypt.compare(password,stored,(err,valid)=>
+            {
+           if(err){
+            return cb(err);
+           }
+           else if(valid){
+              const type="view";
+              const orderid=9;
+              let total;
       
-        
-     }
-     else{
-       
-    return cb(null,false,{message:"password"});
-       
-     }
-     });
+              const cartiteam= cart.map(item =>[
+                  
+                  item.id,
+                  item.name,
+                  item.price,
+                  item.quantity,
+                  total=item.quantity*item.price,
+                  type,
+                  user.id,
+                  orderid
+               ]);
+              console.log(cartiteam);
+              return cb(null,user);
+      
+            
+              
+           }
+           else{
+             
+          return cb(null,false,{message:"password"});
+             
+           }
+           });
+       }
+
        } 
        else{
         return cb(null,false,{message:"email"});
 
        }
     } catch (error) {
-        return cb(error,user);
+        return cb(error,false);
 
     }
     
 }));
+passport.use(
+    "google",
+    new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/checkout",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+  },
+  async (accessToken, refreshToken, profile, cb) => {
+    try {
+      console.log(profile);
+      const result = await db.query("SELECT * FROM users WHERE email = $1", [
+        profile.email,
+      ]);
+      if (result.rows.length === 0) {
+        const newUser = await db.query(
+          "INSERT INTO users (first_name, email, password) VALUES ($1, $2 ,$3)",
+          [profile.given_name,profile.email, "google"]
+        );
+        return cb(null, newUser.rows[0]);
+      } else {
+        return cb(null, result.rows[0]);
+      }
+    } catch (err) {
+      return cb(err);
+    }
+  }
+  
+  ));
 passport.serializeUser((user, cb) => {
     cb(null, user);
   });
@@ -527,15 +591,11 @@ passport.serializeUser((user, cb) => {
     { 
       const{first_name,last_name,email,phone,address,city,state,zip,notes,user_id}= req.body;
         const { amount ,currency} = req.body;
-        const result = await db.query("select address from users where id = $1",[user_id]);
-        if(result.rows[0] == ""){
-            console.log(result.rows[0]);
 
-        }
-        else{
-            console.log("flase");
-
-        }
+       
+        const result = await db.query("update users set first_name = $1,last_name = $2,phone = $3, address = $4, city = $5, state = $6, zip = $7, notes = $8 where id = $9",[first_name,last_name,phone,address,city,state,zip,notes,user_id] );
+        
+       
         
          try
           { 
@@ -549,6 +609,35 @@ passport.serializeUser((user, cb) => {
                     { 
                         res.status(500).send(error);
                      } }); 
+ app.get("/success/:id",async(req,res)=>{
+    const{id}=req.params;
+    const status="ordered";
+    let total;
+    const user = req.user;
+    const cartiteam= cart.map(item =>[
+                
+                item.id,
+                item.name,
+                item.quantity,
+                item.price,
+                total=item.quantity*item.price,
+                status,
+                user.id,
+                id
+             ]);
+            
+             
+                const queryText = "INSERT INTO orders ( product_id, product_name, quantity, price, total,status,customer_id,order_id) VALUES ($1, $2, $3, $4, $5, $6,$7,$8)";
+              for (const orderItem of cartiteam) 
+                { 
+                    await db.query(queryText, orderItem); 
+
+                } 
+                res.render("success.ejs",({order_id:id}));
+
+             
+             
+ })                    
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

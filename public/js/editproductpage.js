@@ -80,8 +80,11 @@ closebar.addEventListener("click",function(){
     }
   }
   function deleteImage() {
-    const previewImage = document.getElementById('previewImage');
-    const previewContainer = document.getElementById('previewContainer');
+   
+  
+
+    const previewImage = document.querySelector('.preview-image');
+    const previewContainer = document.querySelector('.preview-container');
     previewImage.src = '';
     previewContainer.classList.add('hidden');
     document.getElementById('imageUpload').value = ''; // Clear the file input

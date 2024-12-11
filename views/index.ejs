@@ -37,7 +37,7 @@
        <h1 class="font-bold text-2xl md:text-5xl text-center text-white p-2 md:p-5">Shop By Category</h1>
     <div class="p-2 hidden md:grid grid-cols-5 grid-rows-5 gap-4 pt-2">
         <div class="col-span-3 row-span-3 flex  relative">
-            <img class="rounded-md" src="/uploads/<%= image1.image %>" alt="error">
+            <a href="/collection/<%= image1.category %>"><img class="rounded-md" src="/uploads/<%= image1.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%= image1.titel %></h1>
                 <h1 class="text-2xl text-white"><%= image1.short_notes %></h1>
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="col-span-2 row-span-2 col-start-1 row-start-4 flex  relative">
-            <img class="rounded-md" src="/uploads/<%= image2.image %>" alt="error">
+            <a href="/collection/<%= image2.category %>"><img class="rounded-md" src="/uploads/<%= image2.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%=image2.titel %></h1>
                 <h1 class="text-2xl text-white"><%= image2.short_notes %></h1>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="col-span-3 row-span-2 col-start-3 row-start-4 flex  relative">
-            <img class="rounded-md" src="/uploads/<%= image3.image %>" alt="error">
+            <a href="/collection/<%= image3.category %>"><img class="rounded-md" src="/uploads/<%= image3.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%=image3.titel %></h1>
                 <h1 class="text-2xl text-white"><%= image3.short_notes %></h1>
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="col-span-2 row-span-3 col-start-4 row-start-1 flex  relative">
-            <img class="rounded-md" src="/uploads/<%= image4.image %>" alt="error">
+            <a href="/collection/<%= image4.category %>"><img class="rounded-md" src="/uploads/<%= image4.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%=image4.titel %></h1>
                 <h1 class="text-2xl text-white"><%= image4.short_notes %></h1>
@@ -72,42 +72,42 @@
     <!-- sm screen -->
      <div class="md:hidden">
         <div class="relative mt-2 p-1">
-            <img src="./images/s1.jpg" alt="error">
+            <img src="/uploads/<%= image1.image %>" alt="error">
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
                 <h1 class="text-2xl text-white">The best in the market</h1>
-                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+                <a href="/collection/<%= image1.category %>"><button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button></a>
             </div>
         </div>
         <div class="relative mt-2 p-1">
-            <img src="./images/s2.jpg" alt="error">
+            <img src="/uploads/<%= image2.image %>" alt="error">
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
                 <h1 class="text-2xl text-white">The best in the market</h1>
-                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+                <a href="/collection/<%= image2.category %>"><button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button></a>
             </div>
         </div>
         <div class="relative mt-2 p-1">
-            <img src="./images/s3.jpg" alt="error">
+            <img src="/uploads/<%= image3.image %>" alt="error">
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
                 <h1 class="text-2xl text-white">The best in the market</h1>
-                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+                <a href="/collection/<%= image3.category %>"><button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button></a>
             </div>
         </div>
         <div class="relative mt-2 p-1">
-            <img src="./images/s4.jpg" alt="error">
+            <img src="/uploads/<%= image4.image %>" alt="error">
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white">Silk Sarees</h1>
                 <h1 class="text-2xl text-white">The best in the market</h1>
-                <button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button>
+                <a href="/collection/<%= image4.category %>"><button class="border rounded-xl border-2 border-black px-2 py-1 mt-2 text-2xl font-bold hover:bg-white">Buy now</button></a>
             </div>
         </div>
      </div>
      <h1 class="font-bold text-2xl md:text-5xl text-center text-white p-2 md:p-5">Trending Picks</h1>
      <div class="md:flex">
         <div class="relative mt-2 p-1">
-            <img class="flex flex-grow w-full h-full" src="/uploads/<%= trending1.image %>" alt="error">
+            <a href="/collection/<%= trending1.category%>"><img class="flex flex-grow w-full h-full" src="/uploads/<%= trending1.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%= trending1.titel %></h1>
                 <h1 class="text-2xl text-white"><%= trending1.short_notes %></h1>
@@ -115,7 +115,7 @@
             </div>
         </div>
         <div class="relative mt-2 p-1">
-            <img class="flex flex-grow w-full h-full" src="/uploads/<%= trending2.image %>" alt="error">
+            <a href="/collection/<%= trending2.category%>"><img class="flex flex-grow w-full h-full" src="/uploads/<%= trending2.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%= trending2.titel %></h1>
                 <h1 class="text-2xl text-white"><%= trending2.short_notes %></h1>
@@ -125,7 +125,7 @@
      </div>
      <div class="md:flex">
         <div class="relative mt-2 p-1">
-            <img class="flex flex-grow w-full h-full" src="/uploads/<%= trending3.image %>" alt="error">
+            <a href="/collection/<%= trending3.category%>"><img class="flex flex-grow w-full h-full" src="/uploads/<%= trending3.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%= trending3.titel %></h1>
                 <h1 class="text-2xl text-white"><%= trending3.short_notes %></h1>
@@ -133,7 +133,7 @@
             </div>
         </div>
         <div class="relative mt-2 p-1">
-            <img class="flex flex-grow w-full h-full" src="/uploads/<%= trending4.image %>" alt="error">
+            <a href="/collection/<%= trending4.category%>"><img class="flex flex-grow w-full h-full" src="/uploads/<%= trending4.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%= trending4.titel %></h1>
                 <h1 class="text-2xl text-white"><%= trending4.short_notes %></h1>
@@ -143,7 +143,7 @@
      </div>
      <div class="md:flex">
         <div class="relative mt-2 p-1">
-            <img class="flex flex-grow w-full h-full" src="/uploads/<%= trending5.image %>" alt="error">
+            <a href="/collection/<%= trending5.category%>"><img class="flex flex-grow w-full h-full" src="/uploads/<%= trending5.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%= trending5.titel %></h1>
                 <h1 class="text-2xl text-white"><%= trending5.short_notes %></h1>
@@ -151,7 +151,7 @@
             </div>
         </div>
         <div class="relative mt-2 p-1">
-            <img class="flex flex-grow w-full h-full" src="/uploads/<%= trending6.image %>" alt="error">
+            <a href="/collection/<%= trending6.category%>"><img class="flex flex-grow w-full h-full" src="/uploads/<%= trending6.image %>" alt="error"></a>
             <div class="absolute left-10 bottom-10">
                 <h1 class="text-3xl font-bold text-white"><%= trending6.titel %></h1>
                 <h1 class="text-2xl text-white"><%= trending6.short_notes %></h1>

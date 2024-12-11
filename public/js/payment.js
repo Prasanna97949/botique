@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const paymentButton = document.getElementById('pay-button');
+    const checkoutForm = document.getElementById('checkout-form');
 
-    paymentButton.addEventListener('click', () => {
+    checkoutForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the default form submission
         const amount = document.getElementById('amount').value;
         const first_name = document.getElementById('first_name').value;
         const last_name = document.getElementById('last_name').value;
@@ -14,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const notes = document.getElementById('notes').value;
         const user_id = document.getElementById('user_id').value;
         const currency = 'INR'; // You can change this as needed
+        const num=Math.floor(100000 + Math.random() * 900000);
+
 
         fetch('/create-order', {
             method: 'POST',
@@ -37,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
                 order_id: order.id,
                 handler: function(response) {
-                    window.location.href = '/';
+                    window.location.href = `/success/${num}`;
                 },
             
                 theme: {
@@ -51,4 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error:', error);
         });
     });
+
+   
 });

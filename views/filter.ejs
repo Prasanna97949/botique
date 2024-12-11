@@ -98,17 +98,20 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <% products.forEach(product => { %>
             <div class="p-4  rounded-lg shadow-lg">
+                
                 <img src="/uploads/<%= product.image_1 %>" alt="<%= product.name %>" class="w-full h-64 object-cover rounded-md">
                 <h2 class="text-white text-2xl font-bold mt-4"><%= product.name %></h2>
-                <p class="text-white text-xl font-semibold">Price: ₹<%= product.price %></p>
+                <div class="flex items-center mb-4">
+                        <span class="text-2xl font-bold text-white">₹<%= product.price %></span>
+                        <% if (product.price_2) { %>  
+                        <span class="ml-2 text-sm line-through text-gray-500">₹ <%= product.price_2 %></span>
+                        <% } %>
+
+                        <% if (product.offer) { %>  
+                        <span class="ml-4 text-green-600"><%= product.offer %>% Off</span>
+                        <% } %>
+                    </div>
                 <p class="text-white mt-2"><%= product.description %></p>
-                <form action="/cart/add/<%= product.id %>/<%= product.name %>" method="POST" class="mt-4">
-                    <label for="quantity_<%= product.id %>" class="text-white">Quantity:</label>
-                    <input type="number" id="quantity_<%= product.id %>" name="quantity" value="1" min="1" class="border p-2 rounded w-20 ml-2"> <button type="submit" class=" px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded mt-4">Add to Cart</button>
-                   
-
-
-                </form>
                 <form action="/product/<%= product.id %>" method="get">
                     <button type="submit" class="w-full px-3 py-2 bg-black hover:bg-blue-600 text-white font-bold rounded mt-4">View Product</button>
 
