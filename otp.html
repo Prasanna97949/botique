@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="icon" type="image/x-icon" href="./images/Screenshot 2024-11-11 144336.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body >
+    <style>
+        body{
+            background-color: #223331;
+        }
+    </style>
+    <!-- Search bar -->
+    <Section id="searchbar" class="bg-white fixed z-20 top-0 transition-all duration-1000 " style="width: 100%; height:fit-content ;top: -30%;">
+        <div class="text-right p-5">
+            <p id="close-bar" class="inline cursor-pointer">X</p>
+        </div>
+        <div class="flex p-4 gap-3 justify-center">
+            <div style="width: 80%;" class="flex p-3 border border-2 border-black rounded-3xl gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                  <input class="outline-none" type="text" placeholder="Enter the Product....">
+            </div>
+            <button style="height: fit-content;" class=" p-3 bg-black text-white hover:bg-opacity-50 rounded-md">Search</button>
+        </div>
+     </Section>
+    <!-- Navbar ms -->
+     <nav class="hidden p-2 bg-white md:flex justify-between shadow-xl z-10 sticky top-0">
+        <div class="flex justify-center items-center gap-2">
+            <img class="h-10 w-10 rounded-3xl" src="./images/Screenshot 2024-11-11 144336.jpg" alt="error">
+            <h1 class="text-2xl font-bold">The Radha Sarees</h1>
+        </div>
+        <div>
+            <ul class="flex justify-center items-center pt-1 gap-5 ">
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                      </svg>
+                      Home</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                      </svg>
+                      Collections</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                      </svg>
+                      About Us</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                      </svg>
+                      Contact Us</li>
+            </ul>
+        </div>
+        <div class="flex justify-center items-center gap-4">
+            <svg id="search" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              </svg>
+              <svg id="login" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>                           
+        </div>
+     </nav>
+     <!-- Navbar ss -->
+     <nav class="md:hidden p-2 bg-white flex justify-between shadow-xl z-10 sticky top-0">
+        <div class="flex justify-center items-center gap-2">
+            <svg id="menuicon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+              
+        </div>
+        <div class="flex justify-center items-center gap-2">
+            <img class="h-10 w-10 rounded-3xl" src="./images/Screenshot 2024-11-11 144336.jpg" alt="error">
+            <h1 class="text-2xl font-bold">The Radha Sarees</h1>
+        </div>
+        <div class="flex justify-center items-center gap-4">
+            <svg id="search1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              </svg> 
+              <svg id="login1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>                                          
+        </div>
+     </nav>
+     <!-- side navbar -->
+     <Section id="sidenav" class="bg-white fixed z-20 top-0 transition-all duration-1000 " style="width: 50%; height: 100vh;right: -50%;">
+        <div class="text-right p-5">
+            <p id="close-nav" class="inline cursor-pointer">X</p>
+        </div>
+        <ul class="flex flex-col items-center gap-10 text-gray-600">
+            <li class="pt-1 border-b-2 hover:border-black cursor-pointer">Home</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer">Collections</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer">About Us</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer">Contact Us</li>
+        </ul>
+     </Section>
+     <!-- Login menu -->
+     <Section id="loginmenu" class="bg-white fixed z-20 top-20 transition-all duration-1000 rounded-md " style="width: 20%; height:fit-content;right: -50%;">
+        <div class="text-right p-5">
+            <p id="close-log" class="inline cursor-pointer">X</p>
+        </div>
+        <ul class="flex flex-col items-left gap-10 text-gray-600">
+            <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2 p-3">
+                <i class="fa-solid fa-right-to-bracket"></i>Login</li>
+                <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2 p-3">
+                    <i class="fa-solid fa-user-plus"></i>SignUp</li>
+        </ul>
+     </Section>
+     <!-- content -->
+      <div class="flex items-center justify-center h-screen ">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">OTP Authentication</h2>
+            <form id="otpForm">
+                <div class="mb-4">
+                    <label for="mobileNumber" class="block text-sm font-medium text-gray-700">Mobile Number</label>
+                    <input type="text" id="mobileNumber" name="mobileNumber" placeholder="Enter your mobile number" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="mb-4 hidden" id="otpSection">
+                    <label for="otp" class="block text-sm font-medium text-gray-700">OTP</label>
+                    <input type="text" id="otp" name="otp" placeholder="Enter OTP" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <button type="button" id="sendOtp" class="w-full py-2 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Send OTP</button>
+                <button type="button" id="verifyOtp" class="w-full py-2 px-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 hidden mt-4">Verify OTP</button>
+            </form>
+        </div>
+      </div>
+    
+     <!-- Footer -->
+     <div class="flex px-10 justify-center p-5 gap-3">
+        <div style="width: fit-content;" class="p-3 rounded-3xl border-2 border-transparent hover:border-white">
+            <i class="fa-brands fa-square-facebook fa-2xl" style="color: #fafafa;"></i>
+        </div>
+        <div style="width: fit-content;" class="p-3 rounded-3xl border-2 border-transparent hover:border-white">
+            <i class="fa-brands fa-instagram fa-2xl" style="color: #fafafa;"></i>
+        </div>
+        <div style="width: fit-content;" class="p-3 rounded-3xl border-2 border-transparent hover:border-white">
+            <i class="fa-brands fa-whatsapp fa-2xl" style="color: #fafafa;"></i>
+        </div>
+      </div>
+      <hr>
+      <div>
+        <p class="text-white p-2 text-center">Coyrights © 2024. All Rights Reserved.</p>
+      </div>
+     <script src="./otp.js"></script>
+    
+</body>
+</html>
