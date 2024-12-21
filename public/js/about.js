@@ -23,3 +23,16 @@ search1.addEventListener("click",function(){
 closebar.addEventListener("click",function(){
   searchbar.style.top="-30%"
 })
+var loginmenu = document.getElementById("loginmenu")
+var login = document.getElementById("login")
+var login1 = document.getElementById("login1")
+var closelog = document.getElementById("close-log")
+login.addEventListener("click",function(){
+    loginmenu.style.right=0
+})
+login1.addEventListener("click",function(){
+    loginmenu.style.right=0
+})
+closelog.addEventListener("click",function(){
+    loginmenu.style.right="-50%"
+})

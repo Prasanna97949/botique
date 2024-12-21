@@ -95,7 +95,13 @@
         <h1 class="text-4xl text-white font-bold p-2">Our Collections</h1>
     </div>
     <hr>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  
+      <%if(locals.tem ? tem:""){ %>
+        <div class="p-2 text-center">
+            <h1 class="text-4xl  font-bold p-2">Right now no <%= tem %> products are available</h1>
+        </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <% products.forEach(product => { %>
             <div class="p-4  rounded-lg shadow-lg">
                 
@@ -120,11 +126,12 @@
 
             </div>
         <% }); %>
+        <%} %>
     </div>
   
 </div>
 
-<!-- Footer -->
+
 <%- include('partials/footer') %>
 <script src="/js/collection.js"></script>
 </body>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Orders</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Customer Orders</h1>
+    <% orders.forEach(customer => { %>
+        <h2><%= customer.first_name %> <%= customer.last_name %> </h2>
+            <p> mobile no :<%= customer.phone %>
+                <address> <%= customer.address %> <%= customer.state %> <%= customer.city %> <%= customer.zip %> </address> notes: <%= customer.notes %></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Order Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% customer.orders.forEach(order => { %>
+                    <tr>
+                        <td><%= order.order_id %></td>
+                        <td><%= order.product_id %></td>
+                        <td><%= order.product_name %></td>
+                        <td><%= order.quantity %></td>
+                        <td><%= order.total %></td>
+                        <td><%= order.order_date %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% }); %>
+</body>
+</html>

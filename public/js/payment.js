@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())
         .then(order => {
+            console.log("price",order.currency);
             const options = {
                 key: 'rzp_test_VozKLqA8klppsw', // Enter the Key ID generated from the Dashboard
                 amount: order.amount,

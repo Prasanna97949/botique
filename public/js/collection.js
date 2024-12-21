@@ -34,3 +34,16 @@ openfil.addEventListener("click",function(){
 closefil.addEventListener("click",function(){
     filter.style.marginLeft="-40%"
 })
+var loginmenu = document.getElementById("loginmenu")
+var login = document.getElementById("login")
+var login1 = document.getElementById("login1")
+var closelog = document.getElementById("close-log")
+login.addEventListener("click",function(){
+    loginmenu.style.right=0
+})
+login1.addEventListener("click",function(){
+    loginmenu.style.right=0
+})
+closelog.addEventListener("click",function(){
+    loginmenu.style.right="-50%"
+})

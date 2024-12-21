@@ -13,13 +13,14 @@ import { Strategy } from "passport-local";
 import session, { Cookie } from "express-session";
 import GoogleStrategy from "passport-google-oauth2";
 import Razorpay from 'razorpay';
+import nodemailer from 'nodemailer';
 // server.js
 
 env.config();
 
 const razorpay = new Razorpay({
-     key_id: process.env.razorpay_id,
-      key_secret: process.env.razorpay_secrete
+     key_id: "rzp_test_VozKLqA8klppsw",
+      key_secret: "yg7HlRxrw3PLHwNMDkOPDhO6"
      });
 let cart =[];
 
@@ -93,7 +94,7 @@ app.get("/collection", async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM products ORDER BY id ASC");
         const d = result.rows[0];
-        console.log(d);
+        // console.log(d);
         res.render("collection.ejs", { products:result.rows });
     } catch (err) {
         console.error(err);
@@ -166,7 +167,7 @@ app.post("/cart/add", (req, res) => {
 app.get("/product/:id",async(req,res)=>{
     const {id }= req.params;
     const result = await db.query("select * from products where id = $1",[id]);
-console.log(result.rows[0]);
+// console.log(result.rows[0]);
     res.render("product.ejs",({products:result.rows[0]}));
 })
 
@@ -180,25 +181,32 @@ app.get("/signup",(req,res)=>{
 app.get("/collection/:category",async(req,res)=>{
     const {category}=req.params;
 
-    console.log(category);
+    // console.log(category);
     const result = await db.query(`SELECT * FROM products WHERE category = '${category}' ORDER BY price ASC`);
-    res.render("filter.ejs", { products: result.rows ,filter:category});})
+    if(result.rows.length === 0){
+       var cat = category;
+    }
+    res.render("filter.ejs", { products: result.rows ,filter:category,tem:cat});})
 
 app.post("/collection/filter", async (req, res) => {
     const { price, category } = req.body;
     const t = "t";
-console.log(category,"test");
+// console.log(category,"test");
     try {
         if(price === "ASC") {
             if(category) {
                 if(Array.isArray(category)){
                     
                     const result = await db.query("SELECT * FROM products WHERE category = ANY($1) ORDER BY price ASC", [category]);
+                    
                    res.render("filter.ejs", { products: result.rows,filter:category});
                 
                 } else {
                     const result = await db.query("SELECT * FROM products WHERE category = $1 ORDER BY price ASC", [category]);
-                     res.render("filter.ejs", { products: result.rows,filter:category});
+                    if(result.rows.length === 0){
+                        var cat = category;
+                     }
+                     res.render("filter.ejs", { products: result.rows,filter:category,tem:cat});
                     
                 }
             } else {
@@ -213,7 +221,10 @@ console.log(category,"test");
                     res.render("filter.ejs", { products: result.rows,filter:category,checked:"desc"});
                 } else {
                     const result = await db.query("SELECT * FROM products WHERE category = $1 ORDER BY price DESC", [category]);
-                    res.render("filter.ejs", { products: result.rows ,filter:category,checked:"desc"});
+                    if(result.rows.length === 0){
+                        var cat = category;
+                     }
+                    res.render("filter.ejs", { products: result.rows ,filter:category,checked:"desc",tem:cat});
                 }
             } else {
                 const result = await db.query("SELECT * FROM products ORDER BY price DESC");
@@ -433,7 +444,7 @@ app.get("/checkout",async(req,res)=>{
                 user.id,
                 orderid
              ]);
-             console.log("cart page",cartiteam);
+            //  console.log("cart page",cartiteam);
              if(cartiteam){
                 const queryText = "INSERT INTO cart ( product_id, product_name, quantity, price, total,cart_type,customer_id,order_id) VALUES ($1, $2, $3, $4, $5, $6,$7,$8)";
               for (const orderItem of cartiteam) 
@@ -523,7 +534,7 @@ passport.use("local",new Strategy( async function verify(username,password,cb) {
                   user.id,
                   orderid
                ]);
-              console.log(cartiteam);
+            //   console.log(cartiteam);
               return cb(null,user);
       
             
@@ -559,7 +570,7 @@ passport.use(
   },
   async (accessToken, refreshToken, profile, cb) => {
     try {
-      console.log(profile);
+    //   console.log(profile);
       const result = await db.query("SELECT * FROM users WHERE email = $1", [
         profile.email,
       ]);
@@ -589,55 +600,153 @@ passport.serializeUser((user, cb) => {
 
   app.post('/create-order', async (req, res) => 
     { 
-      const{first_name,last_name,email,phone,address,city,state,zip,notes,user_id}= req.body;
-        const { amount ,currency} = req.body;
-
-       
-        const result = await db.query("update users set first_name = $1,last_name = $2,phone = $3, address = $4, city = $5, state = $6, zip = $7, notes = $8 where id = $9",[first_name,last_name,phone,address,city,state,zip,notes,user_id] );
-        
+        const{first_name,last_name,email,phone,address,city,state,zip,notes,user_id}= req.body;
+        const { amount ,currency} = req.body;  
        
         
          try
           { 
+              
+        const result = await db.query("update users set first_name = $1,last_name = $2,phone = $3, address = $4, city = $5, state = $6, zip = $7, notes = $8 where id = $9",[first_name,last_name,phone,address,city,state,zip,notes,user_id] );
+
+     
             const order = await razorpay.orders.create(
                 { 
                     amount: amount * 100, // amount in smallest currency unit
-                     currency: currency, receipt: 'order_rcptid_11' });
+                    
+                     currency: currency, receipt: 'order_rcptid_11' }
+                    );
+                
                       res.json(order); 
-                      console.log(order);
+                      
+
+                      
+                      
                     } catch (error) 
                     { 
+                        console.log("error at payment",error);
                         res.status(500).send(error);
                      } }); 
- app.get("/success/:id",async(req,res)=>{
-    const{id}=req.params;
-    const status="ordered";
+
+
+
+// app.post('/create-order', async (req, res) => 
+//     { 
+//       const{first_name,last_name,email,phone,address,city,state,zip,notes,user_id}= req.body;
+//         const { amount ,currency} = req.body;
+//         const result = await db.query("select address from users where id = $1",[user_id]);
+//         if(result.rows[0] == ""){
+//             console.log(result.rows[0]);
+//         }
+//         else{
+//             console.log("flase");
+//         }
+        
+//          try
+//           { 
+//             const order = await razorpay.orders.create(
+//                 { 
+//                     amount: amount * 100, // amount in smallest currency unit
+//                      currency: currency, receipt: 'order_rcptid_11' });
+//                       res.json(order); 
+//                       console.log(order);
+//                     } catch (error) 
+//                     { 
+//                         console.log(error);
+//                         res.status(500).send(error);
+//                      } }); 
+
+
+
+
+// app.get("/success/:id",async(req,res)=>{
+//     const{id}=req.params;
+//     const status="ordered";
+//     let total;
+//     const user = req.user;
+//     const iteam= cart.map(item =>[
+                
+//                 item.id,
+//                 item.name,
+//                 item.quantity,
+//                 item.price,
+//                 total=item.quantity*item.price,
+               
+//              ]);
+//            let orderItem = [];
+             
+//                 const queryText = "INSERT INTO orders ( product_id, product_name, quantity, price, total,status,customer_id,order_id) VALUES ($1, $2, $3, $4, $5, $6,$7,$8)";
+//               for ( orderItem of iteam) 
+//                 { 
+//                    orderItem.push(iteam);
+//                 } 
+//             console.log(orderItem);
+//                 res.render("success.ejs",({order_id:id}));
+            
+
+             
+             
+//  }) ;
+// 
+
+
+
+
+app.get("/success/:id", async (req, res) => {
+    const { id } = req.params;
+    const status = "ordered";
     let total;
     const user = req.user;
-    const cartiteam= cart.map(item =>[
-                
-                item.id,
-                item.name,
-                item.quantity,
-                item.price,
-                total=item.quantity*item.price,
-                status,
-                user.id,
-                id
-             ]);
-            
-             
-                const queryText = "INSERT INTO orders ( product_id, product_name, quantity, price, total,status,customer_id,order_id) VALUES ($1, $2, $3, $4, $5, $6,$7,$8)";
-              for (const orderItem of cartiteam) 
-                { 
-                    await db.query(queryText, orderItem); 
 
-                } 
-                res.render("success.ejs",({order_id:id}));
+    if (!req.session.processed) {
+        req.session.processed = true; // Set flag to true
 
-             
-             
- })                    
+        const cartiteam = cart.map(item => [
+            item.id,
+            item.name,
+            item.quantity,
+            item.price,
+            total = item.quantity * item.price,
+            status,
+            user.id,
+            id
+        ]);
+
+        const queryText = "INSERT INTO orders (product_id, product_name, quantity, price, total, status, customer_id, order_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+
+        for (const orderItem of cartiteam) {
+            await db.query(queryText, orderItem);
+        }
+
+        res.render("success.ejs", { order_id: id });
+    } else {
+        res.render("success.ejs", { order_id: id });
+    }
+});
+
+
+//  app.get("/order",async(req,res)=>{
+//     const result = await db.query("select o.order_id,o.customer_id,c.first_name,o.product_id,p.name as product_name,o.quantity,o.total,c.address,c.phone,c.state,c.zip,c.notes from orders o join users c on o.customer_id = c.id join products p on o.product_id = p.id order by c.id");
+//     console.log(result.rows);
+//     res.render("order.ejs");
+//  })    
+
+  app.get('/order', async (req, res) => {
+     try { 
+        const result = await db.query(` SELECT c.id AS customer_id, c.first_name, c.last_name,c.phone,c.address,c.state,c.city,c.zip,c.notes ,JSON_AGG( JSON_BUILD_OBJECT( 'order_id', o.order_id, 'product_id', o.product_id, 'product_name', p.name, 'quantity', o.quantity, 'total', o.total ) ) AS orders FROM orders o JOIN users c ON o.customer_id = c.id JOIN products p ON o.product_id = p.id GROUP BY c.id, c.first_name, c.last_name ORDER BY c.id; `); 
+        res.render('order.ejs', { orders: result.rows }); 
+    } 
+        catch (error) 
+        { 
+            console.error('Error fetching orders:', error); 
+            res.status(500).send('Error fetching orders'); 
+        } }); 
+
+
+
+
+
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

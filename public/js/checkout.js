@@ -23,11 +23,7 @@ search1.addEventListener("click",function(){
 closebar.addEventListener("click",function(){
   searchbar.style.top="-30%"
 })
-const cartItems = [
-    { name: "Product 1", price: 19.99, quantity: 2 },
-    { name: "Product 2", price: 49.99, quantity: 1 },
-    { name: "Product 3", price: 9.99, quantity: 3 }
-];
+
 
 // Render cart items
 function renderCart() {
@@ -88,3 +84,16 @@ document.getElementById('checkout-form').addEventListener('submit', function (ev
 
 // Initial rendering of the cart
 renderCart();
+var loginmenu = document.getElementById("loginmenu")
+var login = document.getElementById("login")
+var login1 = document.getElementById("login1")
+var closelog = document.getElementById("close-log")
+login.addEventListener("click",function(){
+    loginmenu.style.right=0
+})
+login1.addEventListener("click",function(){
+    loginmenu.style.right=0
+})
+closelog.addEventListener("click",function(){
+    loginmenu.style.right="-50%"
+})
