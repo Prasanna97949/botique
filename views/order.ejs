@@ -1,25 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Orders</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-    <h1>Customer Orders</h1>
-    <% orders.forEach(customer => { %>
-        <h2><%= customer.first_name %> <%= customer.last_name %> </h2>
-            <p> mobile no :<%= customer.phone %>
-                <address> <%= customer.address %> <%= customer.state %> <%= customer.city %> <%= customer.zip %> </address> notes: <%= customer.notes %></p>
+<%- include('partials/admin') %>
+<style> table { width: 100%; border-collapse: collapse; margin-bottom: 20px; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; font-weight: bold; } tr:nth-child(even) { background-color: #f9f9f9; } tr:hover { background-color: #f1f1f1; } h2 { margin-top: 20px; } .container { padding: 20px; } </style>
+     <!-- content -->
+     <h1 class="text-3xl text-white font-bold text-center p-3">Orders Placed </h1>
+     <% orders.forEach(customer => { %>
+     <div class="p-2 bg-white m-3 rounded-md">
+       
+        <table>
+            <tr><th>Customer Details</th></tr>
+            <tr><td>Customer Name: </td><td><%= customer.first_name %> <%= customer.last_name %> </td></tr>
+          
+            <tr><td>Customer Address: </td><td><%= customer.address %></td></tr>
+            <tr><td>State</td><td><%= customer.state %></td></tr>
+            <tr><td>City/town: </td><td><%= customer.city %></td></tr>
+            <tr><td>Pincode: </td><td><%= customer.zip %></td></tr>
+            <tr><td>Notes given by customer: </td><td><%= customer.notes %></td></tr>
+            <tr>
+                <td>Email:</td>
+                <td><%= customer.email %></td>
+            </tr>
+            <tr><td>Customer Mobile: </td><td><%= customer.phone %></td></tr>
+        </table>
+        <hr>
         <table>
             <thead>
                 <tr>
-                    <th>Order ID</th>
-                    <th>Product ID</th>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Order Date</th>
+                    <th>Order ID </th>
+                    <th> Product ID </th>
+                    <th> Product Name </th>
+                    <th> Quantity </th>
+                    <th> Price </th>
+                    <th> Total </th>
+                    <th> Order Date </th>
+                    <th> Status </th>
                 </tr>
             </thead>
             <tbody>
@@ -29,12 +41,48 @@
                         <td><%= order.product_id %></td>
                         <td><%= order.product_name %></td>
                         <td><%= order.quantity %></td>
+                        <td><%= order.product_price %></td>
                         <td><%= order.total %></td>
                         <td><%= order.order_date %></td>
+                        <td><%= order.Status %></td>
                     </tr>
                 <% }); %>
             </tbody>
         </table>
-    <% }); %>
+        <hr>
+        <form action="/status" method="post">
+            <label for="status">Order Status:</label>
+        <select name="status" id="status">
+            <option value="order Placed">Order Placed</option>
+            <option value="Pending Confrimation">Pending Confirmation</option>
+            <option value="Processing">Processing</option>
+            <option value="Dispatched">Dispathced</option>
+            <option value="deliverd">Deliverd</option>
+        </select>
+       
+                <select name="order_id">
+                    <% 
+                    const uniqueOrderIds = new Set();
+                    customer.orders.forEach(order => {
+                        if (!uniqueOrderIds.has(order.order_id)) {
+                            uniqueOrderIds.add(order.order_id);
+                    %>
+                        <option  value="<%= order.order_id %>"><%= order.order_id %></option>
+                    <% 
+                        }
+                    });
+                    %>
+                </select>
+          <button type="submit" class="w-20 bg-blue-600 text-white font-medium mt-2 rounded-lg hover:bg-blue-700 transition duration-300">Change</button>
+        
+         </form>
+        
+     </div>
+     
+     <% }); %>
+     <!-- Footer -->
+    <%- include('partials/footer') %>
+     <script src="./orderfailed.js"></script>
+    
 </body>
 </html>

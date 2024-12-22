@@ -1,16 +1,30 @@
 <%- include('partials/header') %>
-     <!-- content -->
-      <div class="p-10 flex justify-center">
-        <div class="bg-white rounded-md flex flex-col gap-2 p-10 justify-center items-center text-center">
-            <img class="w-36 h-36" src="/images/tick.jpg" alt="error">
-            <h1 class="text-3xl font-bold">Order Placed Successfully</h1>
-            <h3 class="text-xl">Thank you for Purchasing</h3>
-            <p>Your Order ID: <span class="text-blue-400 font-bold"><%= order_id %></span></p>
-        </div>
-      </div>
-     <!-- Footer -->
- <%- include('partials/footer') %>
-     <script src="./orderplaced.js"></script>
-    
+
+
+<!-- content -->
+<div class="p-10 flex justify-center">
+    <div class="bg-white rounded-md flex flex-col gap-2 p-10 justify-center items-center text-center">
+        <img class="w-36 h-36" src="/images/tick.jpg" alt="success">
+        <h1 class="text-3xl font-bold">Order Placed Successfully</h1>
+        <h3 class="text-xl">Thank you for your purchase</h3>
+        <p>Your Order ID: <span class="text-blue-400 font-bold"><%= order_id %></span></p>
+        <p>Order will be delivered to you soon</p>
+        <a href="/collection" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-4">Continue Shopping</a>
+    </div>
+</div>
+
+<!-- Footer -->
+<%- include('partials/footer') %>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Prevent backward navigation
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+  });
+     
+</script>
+
 </body>
 </html>

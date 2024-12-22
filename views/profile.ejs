@@ -1,0 +1,107 @@
+<%- include('partials/header') %>
+
+<div class="container mx-auto p-6">
+    <h1 class="text-4xl font-bold mb-6 text-center text-blue-600">Profile</h1>
+    <div class="bg-white shadow-xl rounded-lg p-8 max-w-lg mx-auto">
+        <form action="/profile/update" method="POST">
+            <table class="w-full table-auto">
+                <tbody>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">First Name</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="text" id="first_name" name="first_name" value="<%= user.first_name %>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                                <i class="fa fa-edit ml-2 text-blue-500 cursor-pointer" onclick="toggleEdit('first_name', this)"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">Last Name</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="text" id="last_name" name="last_name" value="<%= user.last_name %>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                                <i class="fa fa-edit ml-2 text-blue-500 cursor-pointer" onclick="toggleEdit('last_name', this)"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">Email</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="email" id="email" name="email" value="<%= user.email %>" class="w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed" readonly>
+                                <i class="fa fa-edit ml-2 text-gray-400 cursor-not-allowed"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">Phone</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="text" id="phone" name="phone" value="<%= user.phone %>" class="w-full px-4 py-2 border rounded-lg focus:outline-none bg-gray-100 cursor-not-allowed" readonly>
+                                <i class="fa fa-edit ml-2 text-gray-400 cursor-not-allowed"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">Address</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="text" id="address" name="address" value="<%= user.address %>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                                <i class="fa fa-edit ml-2 text-blue-500 cursor-pointer" onclick="toggleEdit('address', this)"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">City</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="text" id="city" name="city" value="<%= user.city %>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                                <i class="fa fa-edit ml-2 text-blue-500 cursor-pointer" onclick="toggleEdit('city', this)"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">State</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="text" id="state" name="state" value="<%= user.state %>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                                <i class="fa fa-edit ml-2 text-blue-500 cursor-pointer" onclick="toggleEdit('state', this)"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-gray-700 font-semibold">Zip Code</td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center">
+                                <input type="text" id="zip" name="zip" value="<%= user.zip %>" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+                                <i class="fa fa-edit ml-2 text-blue-500 cursor-pointer" onclick="toggleEdit('zip', this)"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition duration-300 mt-6">Update Profile</button>
+        </form>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+<script>
+    function toggleEdit(fieldId, icon) {
+        const inputField = document.getElementById(fieldId);
+        if (inputField.hasAttribute('readonly')) {
+            inputField.removeAttribute('readonly');
+            inputField.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            icon.classList.remove('fa-edit', 'text-blue-500');
+            icon.classList.add('fa-save', 'text-green-500');
+        } else {
+            inputField.setAttribute('readonly', true);
+            inputField.classList.add('bg-gray-100', 'cursor-not-allowed');
+            icon.classList.remove('fa-save', 'text-green-500');
+            icon.classList.add('fa-edit', 'text-blue-500');
+        }
+    }
+</script>
+<script src="/js/index.js"></script>
+</body>
+</html>

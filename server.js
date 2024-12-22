@@ -14,6 +14,7 @@ import session, { Cookie } from "express-session";
 import GoogleStrategy from "passport-google-oauth2";
 import Razorpay from 'razorpay';
 import nodemailer from 'nodemailer';
+import cartRoutes from './cartRoutes.js';
 // server.js
 
 env.config();
@@ -75,6 +76,11 @@ db.connect(err => {
     }
 });
 
+app.use((req, res, next) => {
+    res.locals.user = req.user || null;
+    next();
+});
+app.use('/cart', cartRoutes);
 app.get("/", async (req, res) => {
     try {
         const slider = await db.query("SELECT * FROM slider");
@@ -110,7 +116,55 @@ app.get("/contact", (req, res) => {
     // res.render("contact.ejs",({ cart }));
     res.render("contact.ejs");
 });
+app.get("/profile", (req, res) => {
+    if (req.isAuthenticated()) {
+        res.render("profile.ejs", { user: req.user });
+    } else {
+        res.redirect("/login");
+    }
+});
+app.post("/profile/update", async (req, res) => {
+    if (req.isAuthenticated()) {
+        const { first_name, last_name, phone, address, city, state, zip } = req.body;
+        const userId = req.user.id;
 
+        try {
+            await db.query(
+                "UPDATE users SET first_name = $1, last_name = $2, phone = $3, address = $4, city = $5, state = $6, zip = $7 WHERE id = $8",
+                [first_name, last_name, phone, address, city, state, zip, userId]
+            );
+            req.user.first_name = first_name;
+            req.user.last_name = last_name;
+            req.user.phone = phone;
+            req.user.address = address;
+            req.user.city = city;
+            req.user.state = state;
+            req.user.zip = zip;
+            res.redirect("/profile");
+        } catch (err) {
+            console.error(err);
+            res.send("Error: " + err);
+        }
+    } else {
+        res.redirect("/login");
+    }
+});
+app.get('/dashboard', async (req, res) => { 
+    if (req.isAuthenticated()) {
+         const user = req.user; 
+         try { 
+            const result = await db.query(` SELECT o.order_id, o.product_name, o.quantity, o.price, o.total, o.status, o.order_date FROM orders o WHERE o.customer_id = $1 ORDER BY o.order_date DESC; `, [user.id]); 
+            res.render('dashboard.ejs', { orders: result.rows, user: user }); 
+        } 
+        catch (error) 
+        { console.error('Error fetching orders:', error); 
+            res.status(500).send('Error fetching orders');
+         } } 
+         else
+          { 
+            res.redirect('/login');
+
+          }});
 app.get("/login",async(req,res)=>{
  
     if(req.isAuthenticated())
@@ -124,43 +178,6 @@ app.get("/login",async(req,res)=>{
     
 })
 // Update quantity in the cart
-app.post("/cart/update/:id", (req, res) => {
-    
-    const { id } = req.params;
-    const { quantity } = req.body;
-
-    const item = cart.find(item => item.id === id);
-    if (item) {
-        item.quantity = parseInt(quantity);
-    }
-
-    res.redirect("/cart");
-});
-
-// Remove item from the cart
-app.post("/cart/remove/:id", (req, res) => {
-    const { id } = req.params;
-
-    cart = cart.filter(item => item.id !== id);
-
-    res.redirect("/cart");
-});
-
-// Cart Routes 
-app.post("/cart/add", (req, res) => { 
-     
-    const { quantity ,id, name ,image,price} = req.body; 
-    // Check if the item is already in the cart 
-    const existingItem = cart.find(item => item.id === id); 
-    if (existingItem) { 
-        // Update the quantity if it already exists
-         existingItem.quantity += parseInt(quantity); 
-        } else { 
-            // Add new item to the cart
-             cart.push({ id, name,image,price, quantity: parseInt(quantity) }); 
-            } res.redirect("/cart"); });
- app.get("/cart", (req, res) => { 
-    res.render("cart.ejs", { cart }); });
 
 
 
@@ -232,7 +249,12 @@ app.post("/collection/filter", async (req, res) => {
             }
         }
         else{
-            const result = await db.query("")
+            try {
+                const result = await db.query("");
+            } catch (error) {
+                console.error('Database query error:', error);
+                res.send('An error occurred while fetching the products.');
+            }
         }
     } catch (error) {
         console.error('Database query error:', error);
@@ -242,15 +264,22 @@ app.post("/collection/filter", async (req, res) => {
 
 
 app.get("/admin", async (req, res) => {
-  res.render("adminhome.ejs");
+    if(req.isAuthenticated() && req.user.first_name === "admin"){
+        res.render("adminhome.ejs");
+    }
+    else{
+        res.redirect("/login");
+    }
 });
 app.get("/homepage",async(req,res)=>{
-    
+   if(req.isAuthenticated() && req.user.first_name === "admin"){ 
     const result = await db.query("select * from slider ")
     const front = await db.query("select * from front order by id asc")
     res.render("homepage.ejs",({slider:result.rows[0],first:front.rows}));
+    }
 });
 app.get("/addproduct",async(req,res)=>{
+    if(req.isAuthenticated() && req.user.first_name === "admin"){
     try {
         const result = await db.query("SELECT * FROM products ORDER BY id ASC");
         res.render("addproduct.ejs", { products: result.rows });
@@ -258,7 +287,7 @@ app.get("/addproduct",async(req,res)=>{
         console.error(err);
         res.send("Error: " + err);
     }
-  
+}
 });
 
 app.get("/edit/:id", async (req, res) => {
@@ -339,14 +368,23 @@ try
 
 
 
-app.get("/delete/:id",async(req,res)=>{
-    const {id}= req.params;
-    console.log("delete",id);
-    const result = await db.query("delete from products where id = $1",[id]);
-    res.redirect("/addproduct");
+app.get("/delete/:id", async (req, res) => {
+    const { id } = req.params;
+    console.log("delete", id);
 
+    try {
+        const checkResult = await db.query("SELECT * FROM products WHERE id = $1", [id]);
+        if (checkResult.rows.length === 0) {
+            return res.status(404).send("Product not found");
+        }
 
-})
+        await db.query("DELETE FROM products WHERE id = $1", [id]);
+        res.redirect("/addproduct");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+    }
+});
 app.post("/slider",upload.fields([{ name: 'image_1' }, { name: 'image_2' }, { name: 'image_3' },{name:'image_4'}]),async(req,res)=>{
     const image_1 = req.files && req.files['image_1'] ? req.files['image_1'][0].filename : req.body.existingImage1;
     const image_2 = req.files && req.files['image_2'] ? req.files['image_2'][0].filename : req.body.existingImage2;
@@ -425,60 +463,109 @@ if(password === re_password){
 }
 
 });
-app.get("/checkout",async(req,res)=>{
+
+
+
+//testing for backwards
+app.get("/checkout", async (req, res) => {
     const user = req.user;
-    if(req.isAuthenticated()){
-        
-            const type="view";
-            const orderid=9;
-            let total;
-    
-             const cartiteam= cart.map(item =>[
-                
-                item.id,
-                item.name,
-                item.quantity,
-                item.price,
-                total=item.quantity*item.price,
-                type,
-                user.id,
-                orderid
-             ]);
-            //  console.log("cart page",cartiteam);
-             if(cartiteam){
-                const queryText = "INSERT INTO cart ( product_id, product_name, quantity, price, total,cart_type,customer_id,order_id) VALUES ($1, $2, $3, $4, $5, $6,$7,$8)";
-              for (const orderItem of cartiteam) 
-                { 
-                    await db.query(queryText, orderItem); 
+    if (req.isAuthenticated()) {
+        const type = "view";
+        const orderid = 9;
+        let total;
 
-                } 
+        // Ensure the cart is initialized
+        req.session.cart = req.session.cart || [];
+        console.log("Cart contents before checkout:", req.session.cart);
 
-             }
-             
-             
-             //req.session.cart = [];
-        res.render("checkout.ejs",({cart,first_name:user.first_name,last_name:user.last_name,email:user.email,phone:user.phone,address:user.address,state:user.state,zip:user.zip,city:user.city,user_id:user.id}));
+        const cart = req.session.cart;
 
-    }
-    else{
+        const cartItems = cart.map(item => [
+            item.id,
+            item.name,
+            item.quantity,
+            item.price,
+            total = item.quantity * item.price,
+            type,
+            user.id,
+            orderid
+        ]);
+
+        try {
+            if (cartItems.length > 0) {
+                const queryText = "INSERT INTO cart (product_id, product_name, quantity, price, total, cart_type, customer_id, order_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+                for (const orderItem of cartItems) {
+                    await db.query(queryText, orderItem);
+                }
+            }
+        } catch (error) {
+            console.log("Error inserting into cart:", error);
+        }
+
+        res.render("checkout.ejs", { cart, first_name: user.first_name, last_name: user.last_name, email: user.email, phone: user.phone, address: user.address, state: user.state, zip: user.zip, city: user.city, user_id: user.id });
+    } else {
         res.redirect('/login');
     }
-    
-
-    
-})
+});
 app.post("/login", (req, res, next) => {
-    passport.authenticate("local", function(err, user, info) {
-        if (err) { return next(err); }
-        if (!user) { 
+    // Preserve the cart data before the login process
+    const cartBeforeLogin = req.session.cart ? [...req.session.cart] : [];
+
+    passport.authenticate("local", function (err, user, info) {
+        if (err) {
+            console.log("Error during authentication:", err);
+            return next(err);
+        }
+        if (!user) {
+            console.log("Authentication failed:", info.message);
             return res.render("login.ejs", { notes: info.message });
         }
-        req.logIn(user, function(err) {
-            if (err) { return next(err); }
+        req.logIn(user, function (err) {
+            if (err) {
+                console.log("Error logging in:", err);
+                return next(err);
+            }
+
+            // Restore the cart data after successful login
+            req.session.cart = cartBeforeLogin;
+
+            if (user.first_name === "admin" && user.role === "admin") {
+                console.log("Redirecting to admin page");
+                return res.redirect("/admin");
+            }
+            console.log("Login successful, redirecting to checkout");
             return res.redirect("/checkout");
         });
     })(req, res, next);
 });
+
+
+
+// session cart
+// app.post("/login", (req, res, next) => {
+//     passport.authenticate("local", function (err, user, info) {
+//         if (err) {
+//             console.log("Error during authentication:", err);
+//             return next(err);
+//         }
+//         if (!user) {
+//             console.log("Authentication failed:", info.message);
+//             return res.render("login.ejs", { notes: info.message });
+//         }
+//         req.logIn(user, function (err) {
+//             if (err) {
+//                 console.log("Error logging in:", err);
+//                 return next(err);
+//             }
+//             if (user.first_name === "admin" && user.role === "admin") {
+//                 console.log("Redirecting to admin page");
+//                 return res.redirect("/admin");
+//             }
+//             console.log("Login successful, redirecting to checkout");
+//             return res.redirect("/checkout");
+//         });
+//     })(req, res, next);
+// });
 app.get("/logout", (req, res) => {
     req.logout(function (err) {
       if (err) {
@@ -487,6 +574,77 @@ app.get("/logout", (req, res) => {
       res.redirect("/");
     });
   });
+
+  app.get("/success/:id", async (req, res) => {
+    const { id } = req.params;
+    const status = "ordered";
+    let total;
+    const user = req.user;
+    const date = new Date();
+    req.session.cart = req.session.cart || [];
+    const cart = req.session.cart;
+
+
+    if (!req.session.processed) {
+        req.session.processed = true; // Set flag to true
+
+        const cartiteam = cart.map(item => [
+            item.id,
+            item.name,
+            item.quantity,
+            item.price,
+            total = item.quantity * item.price,
+            status,
+            user.id,
+            id,
+            date
+        ]);
+
+        const queryText = "INSERT INTO orders (product_id, product_name, quantity, price, total, status, customer_id, order_id, order_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8 ,$9)";
+
+        for (const orderItem of cartiteam) {
+            await db.query(queryText, orderItem);
+        }
+        req.session.cart = [];
+        req.session.processed = false;
+
+        res.render("success.ejs", { order_id: id });
+        
+    } else {
+        res.render("success.ejs", { order_id: id });
+    }
+});
+
+
+//  app.get("/order",async(req,res)=>{
+//     const result = await db.query("select o.order_id,o.customer_id,c.first_name,o.product_id,p.name as product_name,o.quantity,o.total,c.address,c.phone,c.state,c.zip,c.notes from orders o join users c on o.customer_id = c.id join products p on o.product_id = p.id order by c.id");
+//     console.log(result.rows);
+//     res.render("order.ejs");
+//  })    
+
+  app.get('/order', async (req, res) => {
+     try { 
+        const result = await db.query(` SELECT c.id AS customer_id, c.first_name, c.last_name,c.phone,c.email,c.address,c.state,c.city,c.zip,c.notes ,JSON_AGG( JSON_BUILD_OBJECT( 'order_id', o.order_id, 'product_id', o.product_id, 'product_name', p.name, 'quantity', o.quantity, 'total', o.total,'order_date', o.order_date,'Status',o.status,'product_price',o.price ) ) AS orders FROM orders o JOIN users c ON o.customer_id = c.id JOIN products p ON o.product_id = p.id GROUP BY c.id, c.first_name, c.last_name ORDER BY c.id; `); 
+       
+        res.render('order.ejs', { orders: result.rows }); 
+    } 
+        catch (error) 
+        { 
+            console.error('Error fetching orders:', error); 
+            res.status(500).send('Error fetching orders'); 
+        } }); 
+
+app.post('/status',async(req,res)=>{
+const {status,order_id}=req.body;
+try {
+    const result = await db.query('update orders set status=$1 where order_id = $2 ',[status,order_id]);
+    res.redirect("/order");
+} catch (error) {
+    console.log("error in status update",error);
+    res.status(500).send("error while updating status");
+}
+
+});
 app.get(
     "/auth/google",
     passport.authenticate("google", {
@@ -501,64 +659,74 @@ app.get(
     })
   );
 
-passport.use("local",new Strategy( async function verify(username,password,cb) {
-   
-    try {
-       const result=await db.query("select * from users where email =$1",[username]);
-       const stored=result.rows[0].password;
-        
-       const user = result.rows[0];
+  app.post('/create-order', async (req, res) => 
+    { 
+        const{first_name,last_name,email,phone,address,city,state,zip,notes,user_id}= req.body;
+        const { amount ,currency} = req.body;  
        
-       if(result.rows.length>0){
-       if(stored==="google"){
-        return cb(null,false,{message:"google"});
-       }else{
-        bcrypt.compare(password,stored,(err,valid)=>
-            {
-           if(err){
-            return cb(err);
-           }
-           else if(valid){
-              const type="view";
-              const orderid=9;
-              let total;
-      
-              const cartiteam= cart.map(item =>[
-                  
-                  item.id,
-                  item.name,
-                  item.price,
-                  item.quantity,
-                  total=item.quantity*item.price,
-                  type,
-                  user.id,
-                  orderid
-               ]);
-            //   console.log(cartiteam);
-              return cb(null,user);
-      
-            
+        
+         try
+          { 
               
-           }
-           else{
-             
-          return cb(null,false,{message:"password"});
-             
-           }
-           });
-       }
+        const result = await db.query("update users set first_name = $1,last_name = $2,phone = $3, address = $4, city = $5, state = $6, zip = $7, notes = $8 where id = $9",[first_name,last_name,phone,address,city,state,zip,notes,user_id] );
 
-       } 
-       else{
-        return cb(null,false,{message:"email"});
+     
+            const order = await razorpay.orders.create(
+                { 
+                    amount: amount * 100, // amount in smallest currency unit
+                    
+                     currency: currency, receipt: 'order_rcptid_11' }
+                    );
+                
+                      res.json(order); 
+                      
 
-       }
+                      
+                      
+                    } catch (error) 
+                    { 
+                        console.log("error at payment",error);
+                        res.status(500).send(error);
+                     } }); 
+
+passport.use("local", new Strategy(async function verify(username, password, cb) {
+    try {
+        console.log("Attempting to log in with username:", username);
+        if (username === "admin@gmail.com" && password === "admin") {
+            console.log("Admin login successful");
+            return cb(null, { id: 0, first_name: "admin", role: "admin" });
+        }
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [username]);
+        if (result.rows.length === 0) {
+            console.log("User not found");
+            return cb(null, false, { message: "email" });
+        }
+        const stored = result.rows[0].password;
+        const user = result.rows[0];
+
+        if (stored === "google") {
+            console.log("User signed up with Google");
+            return cb(null, false, { message: "google" });
+        } else {
+            bcrypt.compare(password, stored, (err, valid) => {
+                if (err) {
+                    console.log("Error comparing passwords:", err);
+                    return cb(err);
+                } else if (valid) {
+                    console.log("Password valid, login successful");
+                    return cb(null, user);
+                } else {
+                    console.log("Invalid password");
+                    return cb(null, false, { message: "password" });
+                }
+            });
+        }
     } catch (error) {
-        return cb(error,false);
-
+        console.log("Error during login:", error);
+        return cb(error);
     }
-    
 }));
+
 passport.use(
     "google",
     new GoogleStrategy(
@@ -598,35 +766,7 @@ passport.serializeUser((user, cb) => {
 
 
 
-  app.post('/create-order', async (req, res) => 
-    { 
-        const{first_name,last_name,email,phone,address,city,state,zip,notes,user_id}= req.body;
-        const { amount ,currency} = req.body;  
-       
-        
-         try
-          { 
-              
-        const result = await db.query("update users set first_name = $1,last_name = $2,phone = $3, address = $4, city = $5, state = $6, zip = $7, notes = $8 where id = $9",[first_name,last_name,phone,address,city,state,zip,notes,user_id] );
 
-     
-            const order = await razorpay.orders.create(
-                { 
-                    amount: amount * 100, // amount in smallest currency unit
-                    
-                     currency: currency, receipt: 'order_rcptid_11' }
-                    );
-                
-                      res.json(order); 
-                      
-
-                      
-                      
-                    } catch (error) 
-                    { 
-                        console.log("error at payment",error);
-                        res.status(500).send(error);
-                     } }); 
 
 
 
@@ -691,56 +831,6 @@ passport.serializeUser((user, cb) => {
 
 
 
-
-app.get("/success/:id", async (req, res) => {
-    const { id } = req.params;
-    const status = "ordered";
-    let total;
-    const user = req.user;
-
-    if (!req.session.processed) {
-        req.session.processed = true; // Set flag to true
-
-        const cartiteam = cart.map(item => [
-            item.id,
-            item.name,
-            item.quantity,
-            item.price,
-            total = item.quantity * item.price,
-            status,
-            user.id,
-            id
-        ]);
-
-        const queryText = "INSERT INTO orders (product_id, product_name, quantity, price, total, status, customer_id, order_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
-
-        for (const orderItem of cartiteam) {
-            await db.query(queryText, orderItem);
-        }
-
-        res.render("success.ejs", { order_id: id });
-    } else {
-        res.render("success.ejs", { order_id: id });
-    }
-});
-
-
-//  app.get("/order",async(req,res)=>{
-//     const result = await db.query("select o.order_id,o.customer_id,c.first_name,o.product_id,p.name as product_name,o.quantity,o.total,c.address,c.phone,c.state,c.zip,c.notes from orders o join users c on o.customer_id = c.id join products p on o.product_id = p.id order by c.id");
-//     console.log(result.rows);
-//     res.render("order.ejs");
-//  })    
-
-  app.get('/order', async (req, res) => {
-     try { 
-        const result = await db.query(` SELECT c.id AS customer_id, c.first_name, c.last_name,c.phone,c.address,c.state,c.city,c.zip,c.notes ,JSON_AGG( JSON_BUILD_OBJECT( 'order_id', o.order_id, 'product_id', o.product_id, 'product_name', p.name, 'quantity', o.quantity, 'total', o.total ) ) AS orders FROM orders o JOIN users c ON o.customer_id = c.id JOIN products p ON o.product_id = p.id GROUP BY c.id, c.first_name, c.last_name ORDER BY c.id; `); 
-        res.render('order.ejs', { orders: result.rows }); 
-    } 
-        catch (error) 
-        { 
-            console.error('Error fetching orders:', error); 
-            res.status(500).send('Error fetching orders'); 
-        } }); 
 
 
 
