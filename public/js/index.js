@@ -1,5 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", function() {
+  const loading = document.getElementById('loading');
+  loading.style.display = 'flex';
   console.log('JavaScript is working!');
 
   
@@ -55,8 +57,16 @@ login.addEventListener("click",function(){
     loginmenu.style.right=0
 })
 login1.addEventListener("click",function(){
-    loginmenu.style.right=0
+    loginmenu.style.right="0"
 })
 closelog.addEventListener("click",function(){
     loginmenu.style.right="-50%"
 })
+// Show the loading animation when the page starts loading
+
+
+// Hide the loading animation when the page has fully loaded
+window.addEventListener('load', function() {
+  const loading = document.getElementById('loading');
+  loading.style.display = 'none';
+});

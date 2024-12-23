@@ -1,54 +1,51 @@
+
+
 <%- include('partials/header') %>
-     <!-- content -->
-      <div class=" text-white">
-        <header class="bg-blue-500 text-black py-4">
-            <div class="container mx-auto text-center">
-              <h1 class="text-3xl font-bold">Boutique Shop</h1>
-              <p class="text-sm">Fashion with a touch of elegance</p>
-            </div>
-          </header>
-        
-          <main class="container mx-auto mt-10 p-5">
-            <h2 class="text-2xl font-semibold text-center text-white">Get in Touch</h2>
-            <p class="text-center text-white mb-8">We'd love to hear from you!</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <!-- Contact Form -->
-              <form class="bg-white shadow-md rounded-lg p-6">
-                <div class="mb-4">
-                  <label for="name" class="block text-gray-700 font-medium">Name</label>
-                  <input type="text" id="name" placeholder="Your Name" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-                <div class="mb-4">
-                  <label for="email" class="block text-gray-700 font-medium">Email</label>
-                  <input type="email" id="email" placeholder="Your Email" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-                <div class="mb-4">
-                  <label for="message" class="block text-gray-700 font-medium">Message</label>
-                  <textarea id="message" rows="4" placeholder="Your Message" class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-                </div>
-                <button type="submit" class="bg-blue-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-pink-600">Send Message</button>
-              </form>
-        
-              <!-- Contact Details -->
-              <div class="bg-white shadow-md rounded-lg p-6">
-                <h3 class="text-xl font-medium text-gray-700">Contact Details</h3>
-                <p class="mt-4 text-gray-600"><strong>Address:</strong> 123 Fashion Avenue, Style City</p>
-                <p class="mt-2 text-gray-600"><strong>Phone:</strong> +91 9876543210</p>
-                <p class="mt-2 text-gray-600"><strong>Email:</strong> contact@boutiqueshop.com</p>
-                <h4 class="text-lg font-medium text-gray-700 mt-6">Follow Us</h4>
-                <div class="flex space-x-4 mt-2">
-                  <a href="#" class="text-blue-500 hover:text-blue-600">Facebook</a>
-                  <a href="#" class="text-blue-500 hover:text-blue-600">Instagram</a>
-                  <a href="#" class="text-blue-500 hover:text-blue-600">Twitter</a>
-                </div>
-              </div>
-            </div>
-          </main>        
+    <!-- content -->
+    <div class="p-5 bg-white md:flex justify-center gap-4">
+        <div class="bg-white mt-4 rounded-md flex flex-col p-3 gap-2 items-center">
+            <i class="fa-solid fa-location-dot fa-xl"></i>
+            <h3 class="font-bold text-xl">Address</h3>
+            <p>41, Somwhere street 2nd cross</p>
+            <p>Somecity</p>
+            <p>602601</p>
+        </div>
+        <div class="bg-white mt-4 rounded-md flex flex-col p-3 px-10 gap-2 items-center">
+            <i class="fa-solid fa-phone fa-xl"></i>
+            <h3 class="font-bold text-xl">Phone Number</h3>
+            <p class="text-blue-600">+91-9159876432</p>
+            <p class="text-blue-600">+91-9876543210</p>
+        </div>
+        <div class="bg-white mt-4 rounded-md flex flex-col p-3 gap-2 items-center">
+            <i class="fa-solid fa-envelope fa-xl"></i>
+            <h3 class="font-bold text-xl">E-mail Address</h3>
+            <p class="text-blue-600">thereathusarees@gamil.com</p>
+        </div>
+        <div class="bg-white mt-4 rounded-md flex flex-col p-3 gap-2 items-center">
+            <i class="fa-solid fa-calendar-days fa-xl"></i>
+            <h3 class="font-bold text-xl">Working Days</h3>
+            <p>Mon-Sat/ 9.00Am - 6.30Pm (IST)</p>
+        </div>
+    </div>
+    <div class="p-3 flex flex-col md:flex-row gap-4">
+      <div class="p-3 flex flex-col gap-4 w-full md:w-1/2">
+        <input class="p-3 rounded-md w-full" type="text" placeholder="Name">
+        <input class="p-3 rounded-md w-full" type="text" placeholder="Email">
+        <input class="p-3 rounded-md w-full" type="text" placeholder="Mobile Number">
+        <textarea class="p-3 rounded-md w-full" name="msg" id="msg" placeholder="Enter Your Message "></textarea>
+        <button class="px-4 py-2 bg-blue-600 rounded-md">Submit</button>
       </div>
-     <!-- Footer -->
+      <div class="border rounded-lg overflow-hidden shadow-lg w-full md:w-1/2">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345094157!2d144.9559239156971!3d-37.81720974202196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0xf577db35f07fba3d!2sVictoria%20Harbour%20Promenade%2C%20Docklands%20VIC%203008%2C%20Australia!5e0!3m2!1sen!2sin!4v1639740979709!5m2!1sen!2sin"
+          width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Footer -->
     <%- include('partials/footer') %>
-     <script src="/js/index.js"></script>
-    
-</body>
-</html>
+        <script src="/js/index.js"></script>
+
+        </body>
+
+        </html>

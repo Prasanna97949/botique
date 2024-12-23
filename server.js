@@ -15,6 +15,7 @@ import GoogleStrategy from "passport-google-oauth2";
 import Razorpay from 'razorpay';
 import nodemailer from 'nodemailer';
 import cartRoutes from './cartRoutes.js';
+import userRoutes from './userRoutes.js';
 // server.js
 
 env.config();
@@ -23,7 +24,7 @@ const razorpay = new Razorpay({
      key_id: "rzp_test_VozKLqA8klppsw",
       key_secret: "yg7HlRxrw3PLHwNMDkOPDhO6"
      });
-let cart =[];
+
 
 const app = express();
 const port = 3000;
@@ -37,14 +38,16 @@ const db = new pg.Client({
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
 });
+db.connect(err => {
+    if (err) {
+        console.error('Connection error', err.stack);
+    } else {
+        console.log('Connected to PostgreSQL');
+    }
+});
 
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = path.dirname(__filename);
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(express.json());
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/uploads/');
@@ -54,6 +57,12 @@ const storage = multer.diskStorage({
     },
 });
 const upload = multer({ storage });
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(express.json());
+
+
 app.use(session({
     secret:"topsecret",
     saveUninitialized:true,
@@ -68,18 +77,14 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-db.connect(err => {
-    if (err) {
-        console.error('Connection error', err.stack);
-    } else {
-        console.log('Connected to PostgreSQL');
-    }
-});
+
+
 
 app.use((req, res, next) => {
     res.locals.user = req.user || null;
     next();
 });
+app.use('/user', userRoutes);
 app.use('/cart', cartRoutes);
 app.get("/", async (req, res) => {
     try {
@@ -96,109 +101,36 @@ app.get("/", async (req, res) => {
     }
 });
 
-app.get("/collection", async (req, res) => {
-    try {
-        const result = await db.query("SELECT * FROM products ORDER BY id ASC");
-        const d = result.rows[0];
-        // console.log(d);
-        res.render("collection.ejs", { products:result.rows });
-    } catch (err) {
-        console.error(err);
-        res.send("Error: " + err);
-    }
-});
+
 
 app.get("/about", (req, res) => {
     res.render("about.ejs");
 });
 
 app.get("/contact", (req, res) => {
-    // res.render("contact.ejs",({ cart }));
+   
     res.render("contact.ejs");
 });
-app.get("/profile", (req, res) => {
-    if (req.isAuthenticated()) {
-        res.render("profile.ejs", { user: req.user });
-    } else {
-        res.redirect("/login");
+
+app.get("/collection", async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM products ORDER BY id ASC");
+        const d = result.rows[0];
+        res.render("collection.ejs", { products:result.rows });
+    } catch (err) {
+        console.error("while collection",err);
+        res.send("Error: " + err);
     }
 });
-app.post("/profile/update", async (req, res) => {
-    if (req.isAuthenticated()) {
-        const { first_name, last_name, phone, address, city, state, zip } = req.body;
-        const userId = req.user.id;
-
-        try {
-            await db.query(
-                "UPDATE users SET first_name = $1, last_name = $2, phone = $3, address = $4, city = $5, state = $6, zip = $7 WHERE id = $8",
-                [first_name, last_name, phone, address, city, state, zip, userId]
-            );
-            req.user.first_name = first_name;
-            req.user.last_name = last_name;
-            req.user.phone = phone;
-            req.user.address = address;
-            req.user.city = city;
-            req.user.state = state;
-            req.user.zip = zip;
-            res.redirect("/profile");
-        } catch (err) {
-            console.error(err);
-            res.send("Error: " + err);
-        }
-    } else {
-        res.redirect("/login");
-    }
-});
-app.get('/dashboard', async (req, res) => { 
-    if (req.isAuthenticated()) {
-         const user = req.user; 
-         try { 
-            const result = await db.query(` SELECT o.order_id, o.product_name, o.quantity, o.price, o.total, o.status, o.order_date FROM orders o WHERE o.customer_id = $1 ORDER BY o.order_date DESC; `, [user.id]); 
-            res.render('dashboard.ejs', { orders: result.rows, user: user }); 
-        } 
-        catch (error) 
-        { console.error('Error fetching orders:', error); 
-            res.status(500).send('Error fetching orders');
-         } } 
-         else
-          { 
-            res.redirect('/login');
-
-          }});
-app.get("/login",async(req,res)=>{
- 
-    if(req.isAuthenticated())
-    {
-    
-      res.redirect("/checkout");
-    }
-    else{
-        res.render("login.ejs");
-    }
-    
-})
-// Update quantity in the cart
-
-
-
 app.get("/product/:id",async(req,res)=>{
     const {id }= req.params;
     const result = await db.query("select * from products where id = $1",[id]);
-// console.log(result.rows[0]);
+
     res.render("product.ejs",({products:result.rows[0]}));
-})
-
-
-
-
-app.get("/signup",(req,res)=>{
-    res.render("signup.ejs");
 })
 
 app.get("/collection/:category",async(req,res)=>{
     const {category}=req.params;
-
-    // console.log(category);
     const result = await db.query(`SELECT * FROM products WHERE category = '${category}' ORDER BY price ASC`);
     if(result.rows.length === 0){
        var cat = category;
@@ -207,8 +139,6 @@ app.get("/collection/:category",async(req,res)=>{
 
 app.post("/collection/filter", async (req, res) => {
     const { price, category } = req.body;
-    const t = "t";
-// console.log(category,"test");
     try {
         if(price === "ASC") {
             if(category) {
@@ -423,6 +353,28 @@ app.post("/front",upload.fields([{name:'image'}]),async(req,res)=>{
    
     
 });
+
+
+
+
+
+app.get("/login",async(req,res)=>{
+ 
+    if(req.isAuthenticated())
+    {
+    
+      res.redirect("/");
+    }
+    else{
+        res.render("login.ejs");
+    }
+    
+})
+// Update quantity in the cart
+app.get("/signup",(req,res)=>{
+    res.render("signup.ejs");
+})
+
 app.post("/signup",async(req,res)=>{
 const{email,password,re_password,first_name,phone} = req.body;
 try {
@@ -459,10 +411,18 @@ if(password === re_password){
     }
 }
 } catch (error) {
-    console.log(error);
+    console.log( "while signup",error);
 }
 
 });
+app.get("/logout", (req, res) => {
+    req.logout(function (err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect("/");
+    });
+  });
 
 
 
@@ -482,7 +442,7 @@ app.get("/checkout", async (req, res) => {
 
         const cartItems = cart.map(item => [
             item.id,
-            item.name,
+            item.product_name,
             item.quantity,
             item.price,
             total = item.quantity * item.price,
@@ -509,9 +469,9 @@ app.get("/checkout", async (req, res) => {
 });
 app.post("/login", (req, res, next) => {
     // Preserve the cart data before the login process
+    const rememberMe = req.body.remember_me;
     const cartBeforeLogin = req.session.cart ? [...req.session.cart] : [];
-
-    passport.authenticate("local", function (err, user, info) {
+    passport.authenticate("local", async function (err, user, info) {
         if (err) {
             console.log("Error during authentication:", err);
             return next(err);
@@ -520,7 +480,7 @@ app.post("/login", (req, res, next) => {
             console.log("Authentication failed:", info.message);
             return res.render("login.ejs", { notes: info.message });
         }
-        req.logIn(user, function (err) {
+        req.logIn(user, async function (err) {
             if (err) {
                 console.log("Error logging in:", err);
                 return next(err);
@@ -528,16 +488,80 @@ app.post("/login", (req, res, next) => {
 
             // Restore the cart data after successful login
             req.session.cart = cartBeforeLogin;
+            if (rememberMe) {
+                req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+            } else {
+                req.session.cookie.expires = false; // Session expires when the browser is closed
+            }
 
+            // Merge session cart with database cart
+            if (req.isAuthenticated()) {
+                const userId = req.user.id;
+                try {
+                    const result = await db.query("SELECT * FROM user_cart WHERE user_id = $1", [userId]);
+                    const dbCart = result.rows;
+                   
+
+                    // Merge session cart with database cart
+                    for (const sessionItem of req.session.cart) {
+                        const dbItem = dbCart.find(item => item.product_id === sessionItem.id);
+                        if (dbItem) {
+                            await db.query("UPDATE user_cart SET quantity = quantity + $1 WHERE user_id = $2 AND product_id = $3", [sessionItem.quantity, userId, sessionItem.id]);
+                        } else {
+                            await db.query("INSERT INTO user_cart (user_id, product_id, product_name, price, quantity, image) VALUES ($1, $2, $3, $4, $5, $6)", [userId, sessionItem.id, sessionItem.product_name, sessionItem.price, sessionItem.quantity, sessionItem.image]);
+                        }
+                    }
+
+                    // Fetch the updated cart from the database
+                    const updatedCartResult = await db.query("SELECT * FROM user_cart WHERE user_id = $1", [userId]);
+                    req.session.cart = updatedCartResult.rows;
+                } catch (err) {
+                    console.error('Error merging cart data:', err);
+                }
+            }
+
+            console.log("cart before login", cartBeforeLogin);
             if (user.first_name === "admin" && user.role === "admin") {
                 console.log("Redirecting to admin page");
                 return res.redirect("/admin");
             }
             console.log("Login successful, redirecting to checkout");
-            return res.redirect("/checkout");
+            return res.redirect("/");
         });
     })(req, res, next);
 });
+//before db cart came the code 
+// app.post("/login", (req, res, next) => {
+//     // Preserve the cart data before the login process
+//     const cartBeforeLogin = req.session.cart ? [...req.session.cart] : [];
+
+//     passport.authenticate("local", function (err, user, info) {
+//         if (err) {
+//             console.log("Error during authentication:", err);
+//             return next(err);
+//         }
+//         if (!user) {
+//             console.log("Authentication failed:", info.message);
+//             return res.render("login.ejs", { notes: info.message });
+//         }
+//         req.logIn(user, function (err) {
+//             if (err) {
+//                 console.log("Error logging in:", err);
+//                 return next(err);
+//             }
+
+//             // Restore the cart data after successful login
+//             req.session.cart = cartBeforeLogin;
+//             console.log("cart before login",cartBeforeLogin);
+//             if (user.first_name === "admin" && user.role === "admin") {
+//                 console.log("Redirecting to admin page");
+//                 return res.redirect("/admin");
+//             }
+//             console.log("Login successful, redirecting to checkout");
+//             return res.redirect("/");
+//         });
+//     })(req, res, next);
+// });
 
 
 
@@ -566,14 +590,7 @@ app.post("/login", (req, res, next) => {
 //         });
 //     })(req, res, next);
 // });
-app.get("/logout", (req, res) => {
-    req.logout(function (err) {
-      if (err) {
-        return next(err);
-      }
-      res.redirect("/");
-    });
-  });
+
 
   app.get("/success/:id", async (req, res) => {
     const { id } = req.params;
@@ -589,10 +606,10 @@ app.get("/logout", (req, res) => {
         req.session.processed = true; // Set flag to true
 
         const cartiteam = cart.map(item => [
-            item.id,
-            item.name,
+            item.product_id,
+            item.product_name,
             item.quantity,
-            item.price,
+            parseInt(item.price),
             total = item.quantity * item.price,
             status,
             user.id,
@@ -604,6 +621,9 @@ app.get("/logout", (req, res) => {
 
         for (const orderItem of cartiteam) {
             await db.query(queryText, orderItem);
+        }
+        if (req.isAuthenticated()) {
+            await db.query("DELETE FROM user_cart WHERE user_id = $1", [user.id]);
         }
         req.session.cart = [];
         req.session.processed = false;
@@ -645,19 +665,9 @@ try {
 }
 
 });
-app.get(
-    "/auth/google",
-    passport.authenticate("google", {
-      scope: ["profile", "email"],
-    })
-  );
-  app.get(
-    "/auth/google/checkout",
-    passport.authenticate("google", {
-      successRedirect: "/checkout",
-      failureRedirect: "/login",
-    })
-  );
+
+
+
 
   app.post('/create-order', async (req, res) => 
     { 
@@ -689,83 +699,125 @@ app.get(
                         res.status(500).send(error);
                      } }); 
 
-passport.use("local", new Strategy(async function verify(username, password, cb) {
-    try {
-        console.log("Attempting to log in with username:", username);
-        if (username === "admin@gmail.com" && password === "admin") {
-            console.log("Admin login successful");
-            return cb(null, { id: 0, first_name: "admin", role: "admin" });
-        }
-        const result = await db.query("SELECT * FROM users WHERE email = $1", [username]);
-        if (result.rows.length === 0) {
-            console.log("User not found");
-            return cb(null, false, { message: "email" });
-        }
-        const stored = result.rows[0].password;
-        const user = result.rows[0];
+                     passport.use("local", new Strategy(async function verify(username, password, cb) {
+                        try {
+                            console.log("Attempting to log in with username:", username);
+                            if (username === "admin@gmail.com" && password === "admin") {
+                                console.log("Admin login successful");
+                                return cb(null, { id: 0, first_name: "admin", role: "admin" });
+                            }
+                            const result = await db.query("SELECT * FROM users WHERE email = $1", [username]);
+                            if (result.rows.length === 0) {
+                                console.log("User not found");
+                                return cb(null, false, { message: "email" });
+                            }
+                            const stored = result.rows[0].password;
+                            const user = result.rows[0];
+                    
+                            if (stored === "google") {
+                                console.log("User signed up with Google");
+                                return cb(null, false, { message: "google" });
+                            } else {
+                                bcrypt.compare(password, stored, (err, valid) => {
+                                    if (err) {
+                                        console.log("Error comparing passwords:", err);
+                                        return cb(err);
+                                    } else if (valid) {
+                                        console.log("Password valid, login successful");
+                                        return cb(null, user);
+                                    } else {
+                                        console.log("Invalid password");
+                                        return cb(null, false, { message: "password" });
+                                    }
+                                });
+                            }
+                        } catch (error) {
+                            console.log("Error during login:", error);
+                            return cb(error);
+                        }
+                    }));
+                    
+                    passport.use(
+                        "google",
+                        new GoogleStrategy(
+                        {
+                          clientID: process.env.GOOGLE_CLIENT_ID,
+                          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                          callbackURL: "http://localhost:3000/auth/google/checkout",
+                          userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+                      },
+                      async (accessToken, refreshToken, profile, cb) => {
+                        try {
+                       
+                          const result = await db.query("SELECT * FROM users WHERE email = $1", [
+                            profile.email,
+                          ]);
+                          if (result.rows.length === 0) {
+                            const newUser = await db.query(
+                              "INSERT INTO users (first_name, email, password) VALUES ($1, $2 ,$3)",
+                              [profile.given_name,profile.email, "google"]
+                            );
+                            return cb(null, newUser.rows[0]);
+                          } else {
+                            return cb(null, result.rows[0]);
+                          }
+                        } catch (err) {
+                          return cb(err);
+                        }
+                      }
+                      
+                      ));
+                    passport.serializeUser((user, cb) => {
+                        cb(null, user);
+                      });
+                      passport.deserializeUser((user, cb) => {
+                        cb(null, user);
+                      });
+                    
+                    
+       
+// Preserve cart data before redirecting to Google
+app.get("/auth/google", (req, res, next) => {
+    req.session.cartBeforeLogin = req.session.cart ? [...req.session.cart] : [];
+    next();
+}, passport.authenticate("google", { scope: ["profile", "email"] }));
 
-        if (stored === "google") {
-            console.log("User signed up with Google");
-            return cb(null, false, { message: "google" });
-        } else {
-            bcrypt.compare(password, stored, (err, valid) => {
-                if (err) {
-                    console.log("Error comparing passwords:", err);
-                    return cb(err);
-                } else if (valid) {
-                    console.log("Password valid, login successful");
-                    return cb(null, user);
-                } else {
-                    console.log("Invalid password");
-                    return cb(null, false, { message: "password" });
+// Handle Google callback and restore cart data
+app.get('/auth/google/checkout', 
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    async (req, res) => {
+        // Restore the cart data after successful login
+        const cartBeforeLogin = req.session.cartBeforeLogin || [];
+        req.session.cart = cartBeforeLogin;
+
+        // Merge session cart with database cart
+        if (req.isAuthenticated()) {
+            const userId = req.user.id;
+            try {
+                const result = await db.query("SELECT * FROM user_cart WHERE user_id = $1", [userId]);
+                const dbCart = result.rows;
+
+                // Merge session cart with database cart
+                for (const sessionItem of req.session.cart) {
+                    const dbItem = dbCart.find(item => item.product_id === sessionItem.id);
+                    if (dbItem) {
+                        await db.query("UPDATE user_cart SET quantity = quantity + $1 WHERE user_id = $2 AND product_id = $3", [sessionItem.quantity, userId, sessionItem.id]);
+                    } else {
+                        await db.query("INSERT INTO user_cart (user_id, product_id, product_name, price, quantity, image) VALUES ($1, $2, $3, $4, $5, $6)", [userId, sessionItem.id, sessionItem.product_name, sessionItem.price, sessionItem.quantity, sessionItem.image]);
+                    }
                 }
-            });
+
+                // Fetch the updated cart from the database
+                const updatedCartResult = await db.query("SELECT * FROM user_cart WHERE user_id = $1", [userId]);
+                req.session.cart = updatedCartResult.rows;
+            } catch (err) {
+                console.error('Error merging cart data:', err);
+            }
         }
-    } catch (error) {
-        console.log("Error during login:", error);
-        return cb(error);
+
+        res.redirect('/');
     }
-}));
-
-passport.use(
-    "google",
-    new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/checkout",
-      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-  },
-  async (accessToken, refreshToken, profile, cb) => {
-    try {
-    //   console.log(profile);
-      const result = await db.query("SELECT * FROM users WHERE email = $1", [
-        profile.email,
-      ]);
-      if (result.rows.length === 0) {
-        const newUser = await db.query(
-          "INSERT INTO users (first_name, email, password) VALUES ($1, $2 ,$3)",
-          [profile.given_name,profile.email, "google"]
-        );
-        return cb(null, newUser.rows[0]);
-      } else {
-        return cb(null, result.rows[0]);
-      }
-    } catch (err) {
-      return cb(err);
-    }
-  }
-  
-  ));
-passport.serializeUser((user, cb) => {
-    cb(null, user);
-  });
-  passport.deserializeUser((user, cb) => {
-    cb(null, user);
-  });
-
-
-
+);
 
 
 

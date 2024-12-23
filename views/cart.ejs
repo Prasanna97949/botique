@@ -13,17 +13,18 @@
                 <div class="cart-item flex items-center space-x-4">
                     <img src="/uploads/<%= item.image %>" alt="<%= item.name %>" class="w-36 h-36 rounded-lg object-cover">
                     <div class="flex-1">
-                        <h2 class="text-lg font-semibold"><%= item.name %></h2>
+                        <h2 class="text-lg font-semibold"><%= item.product_name %></h2>
                         <p class="text-gray-600">Price: ₹<span class="product-price"><%= item.price %></span></p>
                         <form action="/cart/update/<%= item.id %>" method="POST" class="inline">
                           <div class="flex items-center mt-3 space-x-2">
+                            <input type="number" name="product_id" hidden value="<%= item.product_id %>">
 
                                <input type="number" id="quantity" name="quantity" value="<%= item.quantity %>" min="1" class="border p-2 rounded w-20 ml-2">
                                
                              </div> 
                              <button type="submit" class="mt-2 bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">Update</button> 
                          </form>
-                        <form action="/cart/remove/<%= item.id %>" method="POST" class="inline">
+                        <form action="/cart/remove/<%= item.id %>/<%= item.product_id %>" method="POST" class="inline">
                             <button type="submit" class="mt-2 bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600">Remove</button>
                         </form>
                     </div>

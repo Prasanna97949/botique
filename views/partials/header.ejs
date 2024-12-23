@@ -16,6 +16,24 @@
         body{
             background-color: #223331;
         }
+        /* Loading Animation Styles */
+#loading {
+    display: none; /* Initially hidden */
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
     </style>
     <!-- Search bar -->
     <Section id="searchbar" class="bg-white fixed z-20 top-0 transition-all duration-1000 " style="width: 100%; height:fit-content ;top: -30%;">
@@ -110,10 +128,10 @@
             </div>
             <ul class="flex flex-col items-start gap-5 text-gray-600 p-5">
                 <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2 p-3 w-full">
-                    <a href="/profile" class="flex items-center gap-2 w-full"><i class="fa-solid fa-user"></i>Profile</a>
+                    <a href="/user/profile" class="flex items-center gap-2 w-full"><i class="fa-solid fa-user"></i>Profile</a>
                 </li>
                 <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2 p-3 w-full">
-                    <a href="/dashboard" class="flex items-center gap-2 w-full"><i class="fa-solid fa-tachometer-alt"></i>Dashboard</a>
+                    <a href="/user/dashboard" class="flex items-center gap-2 w-full"><i class="fa-solid fa-box"></i>Your Orders</a>
                 </li>
                 <li class="pt-1 border-b-2 hover:border-black cursor-pointer flex gap-2 p-3 w-full">
                     <a href="/logout" class="flex items-center gap-2 w-full"><i class="fa-solid fa-sign-out-alt"></i>Logout</a>
@@ -136,22 +154,7 @@
         </section>
     <% } %>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const profileMenu = document.getElementById('profilemenu');
-            const closeProfile = document.getElementById('close-profile');
-            const profileButton = document.getElementById('profile-button'); // Assuming you have a button to open the profile menu
-    
-            if (profileButton) {
-                profileButton.addEventListener('click', function() {
-                    profileMenu.style.right = '0';
-                });
-            }
-    
-            if (closeProfile) {
-                closeProfile.addEventListener('click', function() {
-                    profileMenu.style.right = '-50%';
-                });
-            }
-        });
-    </script>
+   <!-- Loading Animation -->
+<div id="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+    <div class="loader"></div>
+</div>
