@@ -25,7 +25,7 @@
                         <% }); %>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: <%= order.status === 'Delivered' ? '100%' : order.status === 'Dispatched' ? '75%' : order.status === 'Preparing' ? '50%' : '25%' %>"></div>
+                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: <%= order.status === 'Delivered' ? '100%' : order.status === 'Dispatched' ? '75%' : order.status === 'Processing' ? '50%' : '10%' %>"></div>
                     </div>
                     <div class="flex justify-between text-xs text-gray-600">
                         <span class="<%= order.status === 'Ordered' ? 'text-blue-600 font-bold' : '' %>">Ordered</span>
