@@ -16,19 +16,21 @@ import Razorpay from 'razorpay';
 import nodemailer from 'nodemailer';
 import cartRoutes from './cartRoutes.js';
 import userRoutes from './userRoutes.js';
+import passwordRoutes from './password.js';
+import pkg from "googleapis";
 // server.js
 
 env.config();
-
+const { google,Google } = pkg;
 const razorpay = new Razorpay({
-     key_id: "rzp_test_VozKLqA8klppsw",
-      key_secret: "yg7HlRxrw3PLHwNMDkOPDhO6"
+     key_id:process.env.Razorpay_id,
+      key_secret:process.env.Razorpay_screte
      });
 
 
 const app = express();
 const port = 3000;
-
+let temp=[];
 const salting_round=10;
 
 const db = new pg.Client({
@@ -86,6 +88,9 @@ app.use((req, res, next) => {
 });
 app.use('/user', userRoutes);
 app.use('/cart', cartRoutes);
+
+
+app.use(passwordRoutes);
 app.get("/", async (req, res) => {
     try {
         const slider = await db.query("SELECT * FROM slider");
@@ -111,6 +116,51 @@ app.get("/contact", (req, res) => {
    
     res.render("contact.ejs");
 });
+app.post('/contact', async (req, res) => {
+    const { name, email, phone, message } = req.body;
+
+    try {
+        // Create a Nodemailer transporter
+        const oAuth2Client = new google.auth.OAuth2(
+            process.env.OAUTH_CLIENTID,
+            process.env.OAUTH_CLIENT_SECRET,
+            process.env.OAUTH_REDIRECT_URI
+        );
+        oAuth2Client.setCredentials({ refresh_token: process.env.OAUTH_REFRESH_TOKEN });
+        const accessToken = await oAuth2Client.getAccessToken();
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                type: 'OAuth2',
+                user: process.env.EMAIL_USER,
+                clientId: process.env.OAUTH_CLIENTID,
+                clientSecret: process.env.OAUTH_CLIENT_SECRET,
+                refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+                accessToken: accessToken.token,
+            }
+        });
+
+        // Set up email data
+        const mailOptions = {
+            from: email,
+            to: process.env.EMAIL_USER, // Your email address
+            subject: 'New Contact Form Submission',
+            text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
+
+        // Send a response to the client
+       
+    res.render('contact.ejs', { message: 'Thank you for contacting us! We will get back to you soon.' });
+    } catch (error) {
+        console.error('Error processing contact form:', error);
+        res.status(500).send('An error occurred while processing your request.');
+    }
+});
+
 
 app.get("/collection", async (req, res) => {
     try {
@@ -375,46 +425,167 @@ app.get("/signup",(req,res)=>{
     res.render("signup.ejs");
 })
 
-app.post("/signup",async(req,res)=>{
-const{email,password,re_password,first_name,phone} = req.body;
-try {
-    const user = await db.query("select email from users where email=$1",[email]);
-    if(user.rows.length>0)
-        {
-       res.render("signup.ejs",({notes:"email"}));
-    }
-    else
-    {
-if(password === re_password){
+app.post('/send-otp', async (req, res) => {
+    const { first_name, last_name, email, password } = req.body;
 
+    try {
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+        if (result.rows.length > 0) {
+            return res.json({ success: false, message: 'Email is already registered. Try to log in.' });
+        }
 
-        bcrypt.hash(password,salting_round,async(err,hash)=>{
-            if(err){
-                console.log("error while hassing",err);
-            }
-            else{
-                 const result = await db.query("insert into users (first_name,email,phone,password) values($1,$2,$3,$4) returning *",[first_name,email,phone,hash]);
-                 const user = result.rows[0];
-                 req.login(user,(err)=>{
-                    console.log("error in signup",err);
-                    res.redirect("/checkout");
-                    
-                 })
+        const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
+        const hashedOtp = await bcrypt.hash(otp, 10);
+
+        await db.query("INSERT INTO otps (email, otp) VALUES ($1, $2)", [email,hashedOtp]);
+
+        const oAuth2Client = new google.auth.OAuth2(
+            process.env.OAUTH_CLIENTID,
+            process.env.OAUTH_CLIENT_SECRET,
+            process.env.OAUTH_REDIRECT_URI
+        );
+        oAuth2Client.setCredentials({ refresh_token: process.env.OAUTH_REFRESH_TOKEN });
+        const accessToken = await oAuth2Client.getAccessToken();
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                type: 'OAuth2',
+                user: process.env.EMAIL_USER,
+                clientId: process.env.OAUTH_CLIENTID,
+                clientSecret: process.env.OAUTH_CLIENT_SECRET,
+                refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+                accessToken: accessToken.token,
             }
         });
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Your OTP for Signup',
+            text: `Your OTP for signup is ${otp}. It is valid for 10 minutes.`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error sending OTP:', error);
+        res.status(500).json({ success: false, message: 'An error occurred while sending the OTP.' });
+    }
+});
+
+// Route to handle signup and OTP verification
+app.post('/signup', async (req, res) => {
+    const { first_name, last_name, email, password, otp,mobile } = req.body;
+    const cartBeforeSignup = req.session.cart ? [...req.session.cart] : [];
+    try {
+        const result = await db.query("SELECT * FROM otps WHERE email = $1 ORDER BY created_at DESC LIMIT 1", [email]);
+        if (result.rows.length === 0) {
+            return res.status(400).send('Invalid OTP.');
+        }
+
+        const storedOtp = result.rows[0].otp;
+        console.log(`Stored OTP: ${storedOtp}`);
+        console.log(`Entered OTP: ${otp}`);
+
+        const validOtp = await bcrypt.compare(otp, storedOtp);
+        console.log(`OTP Valid: ${validOtp}`);
+
+        if (!validOtp) {
+            return res.status(400).send('Invalid OTP.');
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUserResult = await db.query("INSERT INTO users (first_name, last_name, email, phone, password) VALUES ($1, $2, $3, $4, $5) RETURNING *", [first_name, last_name, email, mobile, hashedPassword]);
+        await db.query("DELETE FROM otps WHERE email = $1", [email]);
+
+        const newUser = newUserResult.rows[0];
+
+        req.logIn(newUser, async function (err) {
+            if (err) {
+                console.log("Error logging in:", err);
+                return next(err);
+            }
+
+            req.session.cart = cartBeforeSignup;
+
+            // Merge session cart with database cart
+            if (req.isAuthenticated()) {
+                const userId = req.user.id;
+                try {
+                    const result = await db.query("SELECT * FROM user_cart WHERE user_id = $1", [userId]);
+                    const dbCart = result.rows;
+
+                    // Merge session cart with database cart
+                    for (const sessionItem of req.session.cart) {
+                        const dbItem = dbCart.find(item => item.product_id === sessionItem.id);
+                        if (dbItem) {
+                            await db.query("UPDATE user_cart SET quantity = quantity + $1 WHERE user_id = $2 AND product_id = $3", [sessionItem.quantity, userId, sessionItem.id]);
+                        } else {
+                            await db.query("INSERT INTO user_cart (user_id, product_id, product_name, price, quantity, image) VALUES ($1, $2, $3, $4, $5, $6)", [userId, sessionItem.id, sessionItem.product_name, sessionItem.price, sessionItem.quantity, sessionItem.image]);
+                        }
+                    }
+
+                    // Fetch the updated cart from the database
+                    const updatedCartResult = await db.query("SELECT * FROM user_cart WHERE user_id = $1", [userId]);
+                    req.session.cart = updatedCartResult.rows;
+                } catch (err) {
+                    console.error('Error merging cart data:', err);
+                }
+            }
+
+
+            console.log("Signup and login successful, redirecting to home page");
+            return res.redirect("/");
+        });
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
+        res.status(500).send('An error occurred while verifying the OTP.');
+    }
+});
+
+
+//old one without otp
+// app.post("/signup",async(req,res)=>{
+// const{email,password,re_password,first_name,phone} = req.body;
+// try {
+//     const user = await db.query("select email from users where email=$1",[email]);
+//     if(user.rows.length>0)
+//         {
+//        res.render("signup.ejs",({notes:"email"}));
+//     }
+//     else
+//     {
+// if(password === re_password){
+
+
+//         bcrypt.hash(password,salting_round,async(err,hash)=>{
+//             if(err){
+//                 console.log("error while hassing",err);
+//             }
+//             else{
+//                  const result = await db.query("insert into users (first_name,email,phone,password) values($1,$2,$3,$4) returning *",[first_name,email,phone,hash]);
+//                  const user = result.rows[0];
+//                  req.login(user,(err)=>{
+//                     console.log("error in signup",err);
+//                     res.redirect("/checkout");
+                    
+//                  })
+//             }
+//         });
     
         
     
-    }
-    else{
-        res.render("signup.ejs",({notes:"password",first_name:first_name,email:email,phone:phone}));
-    }
-}
-} catch (error) {
-    console.log( "while signup",error);
-}
+//     }
+//     else{
+//         res.render("signup.ejs",({notes:"password",first_name:first_name,email:email,phone:phone}));
+//     }
+// }
+// } catch (error) {
+//     console.log( "while signup",error);
+// }
 
-});
+// });
 app.get("/logout", (req, res) => {
     req.logout(function (err) {
       if (err) {
@@ -778,7 +949,8 @@ try {
        
 // Preserve cart data before redirecting to Google
 app.get("/auth/google", (req, res, next) => {
-    req.session.cartBeforeLogin = req.session.cart ? [...req.session.cart] : [];
+    temp = req.session.cart ? [...req.session.cart] : [];
+    console.log("Cart contents before Google login:", temp);
     next();
 }, passport.authenticate("google", { scope: ["profile", "email"] }));
 
@@ -787,7 +959,7 @@ app.get('/auth/google/checkout',
     passport.authenticate('google', { failureRedirect: '/login' }),
     async (req, res) => {
         // Restore the cart data after successful login
-        const cartBeforeLogin = req.session.cartBeforeLogin || [];
+        const cartBeforeLogin = temp|| [];
         req.session.cart = cartBeforeLogin;
 
         // Merge session cart with database cart

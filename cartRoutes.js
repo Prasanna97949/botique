@@ -115,7 +115,7 @@ router.post("/remove/:id/:product_id", async (req, res) => {
 
 // Render the cart page
 router.get("/", (req, res) => {
-    console.log('cart',req.session.cart);
+    
     res.render("cart.ejs", { cart: req.session.cart });
 });
 

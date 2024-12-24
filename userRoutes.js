@@ -61,8 +61,16 @@ router.get('/dashboard', async (req, res) => {
     if (req.isAuthenticated()) {
          const user = req.user; 
          try { 
-            const result = await db.query(` SELECT o.order_id, o.product_name, o.quantity, o.price, o.total, o.status, o.order_date FROM orders o WHERE o.customer_id = $1 ORDER BY o.order_date DESC; `, [user.id]); 
-            res.render('dashboard.ejs', { orders: result.rows, user: user }); 
+            const result = await db.query(`
+                SELECT order_id, order_date, status, SUM(total) as total, json_agg(json_build_object('product_name', product_name, 'quantity', quantity, 'price', price)) as products
+                FROM orders
+                WHERE customer_id = $1
+                GROUP BY order_id, order_date, status
+                ORDER BY order_date DESC
+            `, [req.user.id]);
+    
+            const orders = result.rows;
+            res.render("dashboard.ejs", { user: req.user, orders });
         } 
         catch (error) 
         { console.error('Error fetching orders:', error); 
